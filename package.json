@@ -9,10 +9,12 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "gen:api": "node scripts/gen-api.mjs"
   },
   "dependencies": {
     "next": "^16.3.6",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
@@ -23,10 +25,16 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.6",
     "eslint-config-prettier": "^10.1.8",
+    "openapi-typescript": "^7.13.0",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=20.9"
+  },
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": "$typescript"
+    }
   }
 }
