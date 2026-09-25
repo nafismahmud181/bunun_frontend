@@ -4,425 +4,449 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Liveness and database check */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Default Response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            /** @enum {string} */
-                            status: "ok" | "degraded";
-                            /** @enum {string} */
-                            database: "up" | "down";
-                            uptimeSeconds: number;
-                        };
-                    };
-                };
-                /** @description Default Response */
-                503: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            /** @enum {string} */
-                            status: "ok" | "degraded";
-                            /** @enum {string} */
-                            database: "up" | "down";
-                            uptimeSeconds: number;
-                        };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Active categories with product counts */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
+    /** Liveness and database check */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @enum {string} */
+              status: 'ok' | 'degraded';
+              /** @enum {string} */
+              database: 'up' | 'down';
+              uptimeSeconds: number;
             };
-            requestBody?: never;
-            responses: {
-                /** @description Default Response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Category"][];
-                    };
-                };
-            };
+          };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+        /** @description Default Response */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @enum {string} */
+              status: 'ok' | 'degraded';
+              /** @enum {string} */
+              database: 'up' | 'down';
+              uptimeSeconds: number;
+            };
+          };
+        };
+      };
     };
-    "/api/v1/products": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List, filter, search and sort products */
-        get: {
-            parameters: {
-                query?: {
-                    /** @description Category slug */
-                    category?: string;
-                    /** @description Search in product and category names */
-                    q?: string;
-                    /** @description Products priced below this */
-                    maxPrice?: number;
-                    /** @description Homepage section key, e.g. bestsellers; keeps its order */
-                    section?: string;
-                    /** @description Old storefront id, e.g. r1 */
-                    legacyId?: string;
-                    sort?: "featured" | "price_asc" | "price_desc" | "newest";
-                    page?: number;
-                    limit?: number;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Default Response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProductList"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/products/{slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    /** Active categories with product counts */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Category'][];
+          };
         };
-        /** One product with its variants and images */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    slug: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Default Response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ProductDetail"];
-                    };
-                };
-                /** @description Default Response */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["NotFound"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+      };
     };
-    "/api/v1/variants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Current price and stock for cart items (unknown or hidden SKUs are left out) */
-        get: {
-            parameters: {
-                query: {
-                    /** @description Comma-separated SKUs, e.g. BN-R1-1,BN-C1-2 */
-                    skus: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Default Response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CartVariant"][];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/products': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** List, filter, search and sort products */
+    get: {
+      parameters: {
+        query?: {
+          /** @description Category slug */
+          category?: string;
+          /** @description Search in product and category names */
+          q?: string;
+          /** @description Products priced below this */
+          maxPrice?: number;
+          /** @description Homepage section key, e.g. bestsellers; keeps its order */
+          section?: string;
+          /** @description Old storefront id, e.g. r1 */
+          legacyId?: string;
+          sort?: 'featured' | 'price_asc' | 'price_desc' | 'newest';
+          page?: number;
+          limit?: number;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProductList'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/products/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** One product with its variants and images */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          slug: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProductDetail'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['NotFound'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/variants': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Current price and stock for cart items (unknown or hidden SKUs are left out) */
+    get: {
+      parameters: {
+        query: {
+          /** @description Comma-separated SKUs, e.g. BN-R1-1,BN-C1-2 */
+          skus: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CartVariant'][];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        ImageInput: {
-            url: string;
-            alt: string | null;
-        };
-        CategoryInput: {
-            slug: string;
-            name: string;
-            imageUrl: string | null;
-            productCount: number;
-        };
-        /** @enum {string} */
-        StockStatusInput: "in_stock" | "low" | "out";
-        ProductSummaryInput: {
-            slug: string;
-            legacyId: string | null;
-            name: string;
-            category: {
-                slug: string;
-                name: string;
-            };
-            tag: string | null;
-            /** @description Lowest variant price */
-            price: number;
-            /** @description First variant's old price, if on sale */
-            compareAtPrice: number | null;
-            image: components["schemas"]["ImageInput"] | null;
-            inStock: boolean;
-            /** @description SKU added by a one-click "Add to Cart" */
-            firstSku: string | null;
-        };
-        VariantInput: {
-            sku: string;
-            label: string;
-            /** @description Whole taka */
-            price: number;
-            /** @description Whole taka */
-            compareAtPrice: number | null;
-            stockStatus: components["schemas"]["StockStatusInput"];
-            /** @description Only sent when stockStatus is "low" (≤ 5) */
-            stockLeft?: number;
-        };
-        ProductDetailInput: {
-            slug: string;
-            legacyId: string | null;
-            name: string;
-            category: {
-                slug: string;
-                name: string;
-            };
-            tag: string | null;
-            /** @description Lowest variant price */
-            price: number;
-            /** @description First variant's old price, if on sale */
-            compareAtPrice: number | null;
-            image: components["schemas"]["ImageInput"] | null;
-            inStock: boolean;
-            /** @description SKU added by a one-click "Add to Cart" */
-            firstSku: string | null;
-            description: string | null;
-            images: components["schemas"]["ImageInput"][];
-            variants: components["schemas"]["VariantInput"][];
-            seoTitle: string | null;
-            seoDescription: string | null;
-        };
-        ProductListInput: {
-            items: components["schemas"]["ProductSummaryInput"][];
-            total: number;
-            page: number;
-            limit: number;
-        };
-        CartVariantInput: {
-            sku: string;
-            label: string;
-            /** @description Whole taka */
-            price: number;
-            stockStatus: components["schemas"]["StockStatusInput"];
-            /** @description Only sent when stockStatus is "low" (≤ 5) */
-            stockLeft?: number;
-            product: {
-                slug: string;
-                name: string;
-                image: components["schemas"]["ImageInput"] | null;
-            };
-        };
-        NotFoundInput: {
-            /** @enum {number} */
-            statusCode: 404;
-            error: string;
-            message: string;
-        };
-        Image: {
-            url: string;
-            alt: string | null;
-        };
-        Category: {
-            slug: string;
-            name: string;
-            imageUrl: string | null;
-            productCount: number;
-        };
-        /** @enum {string} */
-        StockStatus: "in_stock" | "low" | "out";
-        ProductSummary: {
-            slug: string;
-            legacyId: string | null;
-            name: string;
-            category: {
-                slug: string;
-                name: string;
-            };
-            tag: string | null;
-            /** @description Lowest variant price */
-            price: number;
-            /** @description First variant's old price, if on sale */
-            compareAtPrice: number | null;
-            image: components["schemas"]["Image"] | null;
-            inStock: boolean;
-            /** @description SKU added by a one-click "Add to Cart" */
-            firstSku: string | null;
-        };
-        Variant: {
-            sku: string;
-            label: string;
-            /** @description Whole taka */
-            price: number;
-            /** @description Whole taka */
-            compareAtPrice: number | null;
-            stockStatus: components["schemas"]["StockStatus"];
-            /** @description Only sent when stockStatus is "low" (≤ 5) */
-            stockLeft?: number;
-        };
-        ProductDetail: {
-            slug: string;
-            legacyId: string | null;
-            name: string;
-            category: {
-                slug: string;
-                name: string;
-            };
-            tag: string | null;
-            /** @description Lowest variant price */
-            price: number;
-            /** @description First variant's old price, if on sale */
-            compareAtPrice: number | null;
-            image: components["schemas"]["Image"] | null;
-            inStock: boolean;
-            /** @description SKU added by a one-click "Add to Cart" */
-            firstSku: string | null;
-            description: string | null;
-            images: components["schemas"]["Image"][];
-            variants: components["schemas"]["Variant"][];
-            seoTitle: string | null;
-            seoDescription: string | null;
-        };
-        ProductList: {
-            items: components["schemas"]["ProductSummary"][];
-            total: number;
-            page: number;
-            limit: number;
-        };
-        CartVariant: {
-            sku: string;
-            label: string;
-            /** @description Whole taka */
-            price: number;
-            stockStatus: components["schemas"]["StockStatus"];
-            /** @description Only sent when stockStatus is "low" (≤ 5) */
-            stockLeft?: number;
-            product: {
-                slug: string;
-                name: string;
-                image: components["schemas"]["Image"] | null;
-            };
-        };
-        NotFound: {
-            /** @enum {number} */
-            statusCode: 404;
-            error: string;
-            message: string;
-        };
+  schemas: {
+    ImageInput: {
+      url: string;
+      alt: string | null;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    CategoryInput: {
+      slug: string;
+      name: string;
+      imageUrl: string | null;
+      productCount: number;
+    };
+    /** @enum {string} */
+    StockStatusInput: 'in_stock' | 'low' | 'out';
+    ProductSummaryInput: {
+      slug: string;
+      legacyId: string | null;
+      name: string;
+      category: {
+        slug: string;
+        name: string;
+      };
+      tag: string | null;
+      /** @description Lowest variant price */
+      price: number;
+      /** @description First variant's old price, if on sale */
+      compareAtPrice: number | null;
+      image: components['schemas']['ImageInput'] | null;
+      inStock: boolean;
+      /** @description The variant a one-click "Add to Cart" adds */
+      firstVariant: {
+        sku: string;
+        label: string;
+        /** @description Whole taka */
+        price: number;
+        stockStatus: components['schemas']['StockStatusInput'];
+      } | null;
+    };
+    VariantInput: {
+      sku: string;
+      label: string;
+      /** @description Whole taka */
+      price: number;
+      /** @description Whole taka */
+      compareAtPrice: number | null;
+      stockStatus: components['schemas']['StockStatusInput'];
+      /** @description Only sent when stockStatus is "low" (≤ 5) */
+      stockLeft?: number;
+    };
+    ProductDetailInput: {
+      slug: string;
+      legacyId: string | null;
+      name: string;
+      category: {
+        slug: string;
+        name: string;
+      };
+      tag: string | null;
+      /** @description Lowest variant price */
+      price: number;
+      /** @description First variant's old price, if on sale */
+      compareAtPrice: number | null;
+      image: components['schemas']['ImageInput'] | null;
+      inStock: boolean;
+      /** @description The variant a one-click "Add to Cart" adds */
+      firstVariant: {
+        sku: string;
+        label: string;
+        /** @description Whole taka */
+        price: number;
+        stockStatus: components['schemas']['StockStatusInput'];
+      } | null;
+      description: string | null;
+      images: components['schemas']['ImageInput'][];
+      variants: components['schemas']['VariantInput'][];
+      seoTitle: string | null;
+      seoDescription: string | null;
+    };
+    ProductListInput: {
+      items: components['schemas']['ProductSummaryInput'][];
+      total: number;
+      page: number;
+      limit: number;
+    };
+    CartVariantInput: {
+      sku: string;
+      label: string;
+      /** @description Whole taka */
+      price: number;
+      stockStatus: components['schemas']['StockStatusInput'];
+      /** @description Only sent when stockStatus is "low" (≤ 5) */
+      stockLeft?: number;
+      product: {
+        slug: string;
+        name: string;
+        image: components['schemas']['ImageInput'] | null;
+      };
+    };
+    NotFoundInput: {
+      /** @enum {number} */
+      statusCode: 404;
+      error: string;
+      message: string;
+    };
+    Image: {
+      url: string;
+      alt: string | null;
+    };
+    Category: {
+      slug: string;
+      name: string;
+      imageUrl: string | null;
+      productCount: number;
+    };
+    /** @enum {string} */
+    StockStatus: 'in_stock' | 'low' | 'out';
+    ProductSummary: {
+      slug: string;
+      legacyId: string | null;
+      name: string;
+      category: {
+        slug: string;
+        name: string;
+      };
+      tag: string | null;
+      /** @description Lowest variant price */
+      price: number;
+      /** @description First variant's old price, if on sale */
+      compareAtPrice: number | null;
+      image: components['schemas']['Image'] | null;
+      inStock: boolean;
+      /** @description The variant a one-click "Add to Cart" adds */
+      firstVariant: {
+        sku: string;
+        label: string;
+        /** @description Whole taka */
+        price: number;
+        stockStatus: components['schemas']['StockStatus'];
+      } | null;
+    };
+    Variant: {
+      sku: string;
+      label: string;
+      /** @description Whole taka */
+      price: number;
+      /** @description Whole taka */
+      compareAtPrice: number | null;
+      stockStatus: components['schemas']['StockStatus'];
+      /** @description Only sent when stockStatus is "low" (≤ 5) */
+      stockLeft?: number;
+    };
+    ProductDetail: {
+      slug: string;
+      legacyId: string | null;
+      name: string;
+      category: {
+        slug: string;
+        name: string;
+      };
+      tag: string | null;
+      /** @description Lowest variant price */
+      price: number;
+      /** @description First variant's old price, if on sale */
+      compareAtPrice: number | null;
+      image: components['schemas']['Image'] | null;
+      inStock: boolean;
+      /** @description The variant a one-click "Add to Cart" adds */
+      firstVariant: {
+        sku: string;
+        label: string;
+        /** @description Whole taka */
+        price: number;
+        stockStatus: components['schemas']['StockStatus'];
+      } | null;
+      description: string | null;
+      images: components['schemas']['Image'][];
+      variants: components['schemas']['Variant'][];
+      seoTitle: string | null;
+      seoDescription: string | null;
+    };
+    ProductList: {
+      items: components['schemas']['ProductSummary'][];
+      total: number;
+      page: number;
+      limit: number;
+    };
+    CartVariant: {
+      sku: string;
+      label: string;
+      /** @description Whole taka */
+      price: number;
+      stockStatus: components['schemas']['StockStatus'];
+      /** @description Only sent when stockStatus is "low" (≤ 5) */
+      stockLeft?: number;
+      product: {
+        slug: string;
+        name: string;
+        image: components['schemas']['Image'] | null;
+      };
+    };
+    NotFound: {
+      /** @enum {number} */
+      statusCode: 404;
+      error: string;
+      message: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

@@ -1,17 +1,22 @@
 import type { CSSProperties } from 'react';
 import { STORE as S } from './store';
-import type { Product } from './types';
 
 export const fmt = (n: number) => Math.round(n).toLocaleString('en-IN');
 export const px = (id: number, w = 800) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
-export const imgOf = (p: Product, w?: number) => p.imgUrl || px(p.img, w);
-export const byId = (id: string) => S.products.find((p) => p.id === id);
-/** Looks up several products by id, skipping any that no longer exist. */
-export const byIds = (ids: string[]) => ids.map(byId).filter((p): p is Product => p !== undefined);
-export const unitPrice = (p: Product, size: number) =>
-  Math.round((p.price * (1 + (S.sizeUplift[size] || 0))) / 10) * 10;
-export const catHref = (c: string) => '/shop?cat=' + encodeURIComponent(c);
+/** An image URL at the given width. Pexels URLs are resized through their `w` parameter; others are returned as-is. */
+export const imgSrc = (url: string, w = 800) => {
+  try {
+    const u = new URL(url);
+    if (u.hostname !== 'images.pexels.com') return url;
+    u.searchParams.set('w', String(w));
+    return u.toString();
+  } catch {
+    return url;
+  }
+};
+export const catHref = (slug: string) => '/shop?cat=' + encodeURIComponent(slug);
+export const productHref = (slug: string) => `/product/${slug}`;
 export const bg = (url: string): CSSProperties => ({ backgroundImage: `url('${url}')` });
 
 export const faqs = (): [string, string][] => [

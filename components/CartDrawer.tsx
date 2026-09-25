@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { STORE as S } from '@/lib/store';
-import { bg, fmt, imgOf } from '@/lib/utils';
+import { bg, fmt, imgSrc } from '@/lib/utils';
 import { useCart } from './CartProvider';
 
 export default function CartDrawer() {
@@ -40,20 +40,20 @@ export default function CartDrawer() {
         <div className="drawer-items">
           {lines.length === 0 && <div className="empty">Your cart is empty.</div>}
           {lines.map((l) => (
-            <div className="line-item" key={l.key}>
-              <div className="line-img" style={bg(imgOf(l.p, 300))} />
+            <div className="line-item" key={l.sku}>
+              <div className="line-img" style={l.snapshot.image ? bg(imgSrc(l.snapshot.image, 300)) : undefined} />
               <div>
-                <b>{l.p.name}</b>
-                <small>{l.sizeLabel}</small>
+                <b>{l.snapshot.name}</b>
+                <small>{l.snapshot.label}</small>
                 <div className="line-qty">
-                  <button onClick={() => changeQty(l.key, -1)} aria-label="Decrease">
+                  <button onClick={() => changeQty(l.sku, -1)} aria-label="Decrease">
                     −
                   </button>
                   <span>{l.qty}</span>
-                  <button onClick={() => changeQty(l.key, 1)} aria-label="Increase">
+                  <button onClick={() => changeQty(l.sku, 1)} aria-label="Increase">
                     +
                   </button>
-                  <button className="remove" onClick={() => remove(l.key)}>
+                  <button className="remove" onClick={() => remove(l.sku)}>
                     Remove
                   </button>
                 </div>

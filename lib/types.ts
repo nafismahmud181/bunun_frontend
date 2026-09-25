@@ -1,16 +1,12 @@
-export interface Product {
-  id: string;
-  name: string;
-  cat: string;
-  price: number;
-  was?: number;
-  tag?: string;
-  /** Pexels photo ID */
-  img: number;
-  /** Own image URL; overrides `img` */
-  imgUrl?: string;
-  desc: string;
-}
+import type { components } from './api/schema';
+
+// Catalogue types come from the backend's OpenAPI spec (`npm run gen:api`).
+type Schemas = components['schemas'];
+export type Category = Schemas['Category'];
+export type ProductSummary = Schemas['ProductSummary'];
+export type ProductDetail = Schemas['ProductDetail'];
+export type Variant = Schemas['Variant'];
+export type CartVariant = Schemas['CartVariant'];
 
 export interface Review {
   name: string;
@@ -19,17 +15,11 @@ export interface Review {
   text: string;
 }
 
+/** Store settings that aren't in the database yet (delivery zones and reviews come in Phases 2 and 5). */
 export interface Store {
   freeShipAt: number;
   saleEnds: string;
   delivery: Record<DeliveryArea, number>;
-  categories: string[];
-  categoryImages: Record<string, number>;
-  sizes: Record<string, string[]>;
-  sizeUplift: number[];
-  bestsellers: string[];
-  newArrivals: string[];
-  products: Product[];
   reviews: Review[];
 }
 
@@ -37,18 +27,23 @@ export type DeliveryArea = 'dhaka' | 'outside';
 
 export type PaymentMethod = 'cod' | 'bkash' | 'nagad' | 'card';
 
-/** What the cart stores: a product, a size index and a quantity. */
+/** What the cart stores: a variant, a quantity, and a copy of what to show until the API refreshes it. */
 export interface CartItem {
-  key: string;
-  id: string;
-  size: number;
+  sku: string;
   qty: number;
+  snapshot: CartSnapshot;
 }
 
-/** A cart item joined with its product and price. */
+export interface CartSnapshot {
+  slug: string;
+  name: string;
+  label: string;
+  price: number;
+  image: string | null;
+}
+
+/** A cart item with its line total. */
 export interface CartLine extends CartItem {
-  p: Product;
-  sizeLabel: string;
   total: number;
 }
 
@@ -59,7 +54,7 @@ export interface Order {
   area: DeliveryArea;
   address: string;
   payment: PaymentMethod;
-  items: { id: string; name: string; size: string; qty: number; total: number }[];
+  items: { sku: string; name: string; size: string; qty: number; total: number }[];
   subtotal: number;
   delivery: number;
   total: number;

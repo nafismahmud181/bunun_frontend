@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { STORE as S } from '@/lib/store';
 import { catHref } from '@/lib/utils';
+import type { Category } from '@/lib/types';
 
-export default function Footer() {
+export default function Footer({ categories }: { categories: Category[] }) {
   return (
     <footer className="site-footer">
       <div className="container footer-cols">
@@ -14,9 +14,9 @@ export default function Footer() {
         </div>
         <div>
           <h4>Shop</h4>
-          {S.categories.map((c) => (
-            <Link key={c} href={catHref(c)}>
-              {c}
+          {categories.map((c) => (
+            <Link key={c.slug} href={catHref(c.slug)}>
+              {c.name}
             </Link>
           ))}
         </div>

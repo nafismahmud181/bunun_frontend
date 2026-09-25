@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import { getCategories, listProducts } from '@/lib/catalogue';
 import { STORE as S } from '@/lib/store';
-import { bg, byIds, catHref, faqs, fmt, imgOf, px } from '@/lib/utils';
+import { bg, catHref, faqs, fmt, imgSrc, productHref, px } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import Countdown from '@/components/Countdown';
 import Accordion from '@/components/Accordion';
@@ -13,10 +14,18 @@ const TRUST: [string, string, string][] = [
   ['7d', 'Easy Exchange', 'Within 7 days'],
 ];
 
-export default function HomePage() {
-  const picks = S.products
-    .filter((p) => p.was)
-    .concat(S.products.filter((p) => !p.was && p.tag))
+export default async function HomePage() {
+  const [categories, all, bestsellers, newArrivals] = await Promise.all([
+    getCategories(),
+    listProducts({ limit: 100 }),
+    listProducts({ section: 'bestsellers' }),
+    listProducts({ section: 'new-arrivals' }),
+  ]);
+  const products = all.items;
+  // Discounted products first, then other tagged ones.
+  const picks = products
+    .filter((p) => p.compareAtPrice)
+    .concat(products.filter((p) => !p.compareAtPrice && p.tag))
     .slice(0, 4);
 
   return (
@@ -34,22 +43,24 @@ export default function HomePage() {
               <Link className="btn btn-primary" href="/shop">
                 Shop the Sale
               </Link>
-              <Link className="btn btn-outline" href={catHref('Table Runners')}>
+              <Link className="btn btn-outline" href={catHref('table-runners')}>
                 Table Runners
               </Link>
             </div>
           </div>
           <div className="hero2-side">
             {picks.map((p) => (
-              <Link className="pick" key={p.id} href={`/product/${p.id}`}>
-                <div className="pick-img" style={bg(imgOf(p, 600))}>
-                  {p.was && <span className="pick-off">-{Math.round((1 - p.price / p.was) * 100)}%</span>}
+              <Link className="pick" key={p.slug} href={productHref(p.slug)}>
+                <div className="pick-img" style={p.image ? bg(imgSrc(p.image.url, 600)) : undefined}>
+                  {p.compareAtPrice && (
+                    <span className="pick-off">-{Math.round((1 - p.price / p.compareAtPrice) * 100)}%</span>
+                  )}
                 </div>
                 <div className="pick-body">
                   <b>{p.name}</b>
                   <span>
                     ৳{fmt(p.price)}
-                    {p.was && <s>৳{fmt(p.was)}</s>}
+                    {p.compareAtPrice && <s>৳{fmt(p.compareAtPrice)}</s>}
                   </span>
                 </div>
               </Link>
@@ -77,12 +88,12 @@ export default function HomePage() {
           Shop by Category
         </h2>
         <div className="grid-cats">
-          {S.categories.map((c) => (
-            <Link className="cat-tile" key={c} href={catHref(c)}>
-              <div className="cat-img" style={bg(px(S.categoryImages[c] ?? 0))} />
+          {categories.map((c) => (
+            <Link className="cat-tile" key={c.slug} href={catHref(c.slug)}>
+              <div className="cat-img" style={c.imageUrl ? bg(imgSrc(c.imageUrl)) : undefined} />
               <div className="cat-body">
-                <b>{c}</b>
-                <small>{S.products.filter((p) => p.cat === c).length} products</small>
+                <b>{c.name}</b>
+                <small>{c.productCount} products</small>
               </div>
             </Link>
           ))}
@@ -97,8 +108,8 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid-products">
-          {byIds(S.bestsellers).map((p) => (
-            <ProductCard key={p.id} p={p} />
+          {bestsellers.items.map((p) => (
+            <ProductCard key={p.slug} p={p} />
           ))}
         </div>
       </section>
@@ -110,7 +121,7 @@ export default function HomePage() {
               <span className="promo-tag red">Up to 25% Off</span>
               <h3>Eid Festive Collection</h3>
               <p>Jamdani runners and kantha linens to welcome guests in style.</p>
-              <Link className="btn btn-white" href={catHref('Table Runners')}>
+              <Link className="btn btn-white" href={catHref('table-runners')}>
                 Shop Festive
               </Link>
             </div>
@@ -120,7 +131,7 @@ export default function HomePage() {
               <span className="promo-tag">Buy 2, Get 1 Free</span>
               <h3>Cushion Cover Combo</h3>
               <p>Mix and match any three cushion covers — refresh your sofa for less.</p>
-              <Link className="btn btn-white" href={catHref('Cushion Covers')}>
+              <Link className="btn btn-white" href={catHref('cushion-covers')}>
                 Shop Cushions
               </Link>
             </div>
@@ -136,8 +147,8 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid-products">
-          {byIds(S.newArrivals).map((p) => (
-            <ProductCard key={p.id} p={p} forceNew />
+          {newArrivals.items.map((p) => (
+            <ProductCard key={p.slug} p={p} forceNew />
           ))}
         </div>
       </section>
@@ -151,7 +162,7 @@ export default function HomePage() {
             <Link className="budget" key={a} href={`/shop?max=${a}&sort=low`}>
               <small>Under</small>
               <strong>৳{fmt(a)}</strong>
-              <span>{S.products.filter((p) => p.price < a).length} products →</span>
+              <span>{products.filter((p) => p.price < a).length} products →</span>
             </Link>
           ))}
         </div>

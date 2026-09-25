@@ -4,34 +4,53 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { STORE as S } from '@/lib/store';
-import { bg, byId, catHref, fmt, imgOf, px, unitPrice } from '@/lib/utils';
+import { bg, catHref, fmt, imgSrc } from '@/lib/utils';
+import type { ProductDetail as Product, ProductSummary, Variant } from '@/lib/types';
 import { useCart } from './CartProvider';
 import Accordion from './Accordion';
 import ProductCard from './ProductCard';
 
-export default function ProductDetail({ id }: { id: string }) {
-  const found = byId(id);
+const stockText = (v: Variant | undefined) =>
+  !v || v.stockStatus === 'out' ? 'Out of stock' : v.stockStatus === 'low' ? `Only ${v.stockLeft} left` : 'In stock';
+
+interface Props {
+  p: Product;
+  /** Every other product, used for "You May Also Like" and to fill out the gallery. */
+  others: ProductSummary[];
+  categoryImage: string | null;
+}
+
+export default function ProductDetail({ p, others, categoryImage }: Props) {
   const router = useRouter();
   const { add, setOpen } = useCart();
   const [img, setImg] = useState(0);
   const [size, setSize] = useState(0);
   const [qty, setQty] = useState(1);
-  // The page checks the id before rendering this component.
-  if (!found) throw new Error(`Unknown product ${id}`);
-  const p = found;
 
-  const sizes = S.sizes[p.cat] ?? [];
-  const unit = unitPrice(p, size);
+  const variant: Variant | undefined = p.variants[size];
+  const unit = variant?.price ?? p.price;
+  const soldOut = !variant || variant.stockStatus === 'out';
+  const sameCategory = others.filter((x) => x.category.slug === p.category.slug);
+  // The product's own photos first, then other photos from its category, up to four.
   const gallery = [
-    p.img,
-    ...S.products.filter((x) => x.cat === p.cat && x.id !== p.id).map((x) => x.img),
-    S.categoryImages[p.cat] ?? p.img,
+    ...p.images.map((i) => i.url),
+    ...sameCategory.flatMap((x) => (x.image ? [x.image.url] : [])),
+    ...(categoryImage ? [categoryImage] : []),
   ]
     .filter((v, i, a) => a.indexOf(v) === i)
     .slice(0, 4)
-    .map((i) => (i === p.img ? imgOf(p, 1200) : px(i, 1200)));
+    .map((url) => imgSrc(url, 1200));
+  const addToCart = () =>
+    variant &&
+    add(variant.sku, qty, {
+      slug: p.slug,
+      name: p.name,
+      label: variant.label,
+      price: variant.price,
+      image: p.image ? imgSrc(p.image.url) : null,
+    });
   const details: [string, string][] = [
-    ['Product Details', p.desc + ' Colour may vary slightly due to the handmade nature of the product.'],
+    ['Product Details', p.description + ' Colour may vary slightly due to the handmade nature of the product.'],
     [
       'Care Instructions',
       'Hand wash or gentle machine wash in cold water. Dry in shade. Warm iron on the reverse side.',
@@ -41,9 +60,8 @@ export default function ProductDetail({ id }: { id: string }) {
       'Delivery across all 64 districts. Inside Dhaka 1–2 days, outside Dhaka 3–5 days. Easy exchange within 7 days if the product is unused with tags.',
     ],
   ];
-  const related = S.products
-    .filter((x) => x.id !== p.id)
-    .sort((a, b) => Number(b.cat === p.cat) - Number(a.cat === p.cat))
+  const related = [...others]
+    .sort((a, b) => Number(b.category.slug === p.category.slug) - Number(a.category.slug === p.category.slug))
     .slice(0, 4);
 
   return (
@@ -51,13 +69,18 @@ export default function ProductDetail({ id }: { id: string }) {
       <div className="crumbs">
         <Link href="/">Home</Link>
         <span>/</span>
-        <Link href={catHref(p.cat)}>{p.cat}</Link>
+        <Link href={catHref(p.category.slug)}>{p.category.name}</Link>
         <span>/</span>
         <span>{p.name}</span>
       </div>
       <div className="pdp">
         <div className="gallery">
-          <div className="gallery-main" style={bg(gallery[img])} role="img" aria-label={p.name} />
+          <div
+            className="gallery-main"
+            style={gallery[img] ? bg(gallery[img]) : undefined}
+            role="img"
+            aria-label={p.name}
+          />
           <div className="thumbs">
             {gallery.map((g, i) => (
               <button
@@ -73,26 +96,26 @@ export default function ProductDetail({ id }: { id: string }) {
         <div className="pdp-info">
           <div className="pdp-head">
             <span className="eyebrow" style={{ letterSpacing: '.06em' }}>
-              {p.cat}
+              {p.category.name}
             </span>
             <h1>{p.name}</h1>
             <div className="pdp-meta">
-              ★ 4.8 ({40 + p.name.length * 3} reviews) · SKU BN-{p.id.toUpperCase()}-{size + 1} · <b>In stock</b>
+              ★ 4.8 ({40 + p.name.length * 3} reviews) · SKU {variant?.sku} · <b>{stockText(variant)}</b>
             </div>
             <div className="price-row" style={{ gap: 10 }}>
               <span className="pdp-price">৳{fmt(unit)}</span>
-              {p.was && size === 0 && <span className="pdp-was">৳{fmt(p.was)}</span>}
+              {variant?.compareAtPrice && <span className="pdp-was">৳{fmt(variant.compareAtPrice)}</span>}
             </div>
           </div>
-          <p className="pdp-desc">{p.desc}</p>
+          <p className="pdp-desc">{p.description}</p>
           <div>
             <div className="opt-label">
-              Size: <span>{sizes[size]}</span>
+              Size: <span>{variant?.label}</span>
             </div>
             <div className="sizes">
-              {sizes.map((s, i) => (
-                <button key={s} className={`size ${i === size ? 'active' : ''}`} onClick={() => setSize(i)}>
-                  {s}
+              {p.variants.map((v, i) => (
+                <button key={v.sku} className={`size ${i === size ? 'active' : ''}`} onClick={() => setSize(i)}>
+                  {v.label}
                 </button>
               ))}
             </div>
@@ -109,17 +132,19 @@ export default function ProductDetail({ id }: { id: string }) {
             </div>
             <button
               className="btn btn-green-outline"
+              disabled={soldOut}
               onClick={() => {
-                add(p.id, size, qty);
+                addToCart();
                 setOpen(true);
               }}
             >
-              Add to Cart
+              {soldOut ? 'Out of Stock' : 'Add to Cart'}
             </button>
             <button
               className="btn btn-primary"
+              disabled={soldOut}
               onClick={() => {
-                add(p.id, size, qty);
+                addToCart();
                 router.push('/checkout');
               }}
             >
@@ -144,7 +169,7 @@ export default function ProductDetail({ id }: { id: string }) {
         <h2 className="h2">You May Also Like</h2>
         <div className="grid-products">
           {related.map((x) => (
-            <ProductCard key={x.id} p={x} />
+            <ProductCard key={x.slug} p={x} />
           ))}
         </div>
       </div>

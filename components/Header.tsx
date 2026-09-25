@@ -5,6 +5,7 @@ import { Suspense, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { STORE as S } from '@/lib/store';
 import { catHref, fmt } from '@/lib/utils';
+import type { Category } from '@/lib/types';
 import { useCart } from './CartProvider';
 
 const Icon = {
@@ -74,37 +75,39 @@ function SearchWithParams() {
   return <SearchForm initial={pathname === '/shop' ? sp.get('q') || '' : ''} />;
 }
 
-function NavList({ isActive }: { isActive?: (label: string) => boolean }) {
-  const items: [string, string][] = [
-    ['Home', '/'],
-    ['All Products', '/shop'],
-    ...S.categories.map((c): [string, string] => [c, catHref(c)]),
+type NavItem = { key: string; label: string; href: string };
+
+function NavList({ categories, isActive }: { categories: Category[]; isActive?: (item: NavItem) => boolean }) {
+  const items: NavItem[] = [
+    { key: 'home', label: 'Home', href: '/' },
+    { key: 'all', label: 'All Products', href: '/shop' },
+    ...categories.map((c) => ({ key: c.slug, label: c.name, href: catHref(c.slug) })),
   ];
   return (
     <div className="nav-links">
-      {items.map(([label, href]) => (
-        <Link key={href} href={href} className={`nav-link ${isActive?.(label) ? 'active' : ''}`}>
-          {label}
+      {items.map((item) => (
+        <Link key={item.href} href={item.href} className={`nav-link ${isActive?.(item) ? 'active' : ''}`}>
+          {item.label}
         </Link>
       ))}
     </div>
   );
 }
 
-function NavWithParams() {
+function NavWithParams({ categories }: { categories: Category[] }) {
   const pathname = usePathname();
   const sp = useSearchParams();
   const onShop = pathname === '/shop';
   const cat = sp.get('cat');
-  const isActive = (label: string) => {
-    if (label === 'Home') return pathname === '/';
-    if (label === 'All Products') return onShop && !cat && !sp.get('max') && !sp.get('q');
-    return onShop && cat === label;
+  const isActive = ({ key, label }: NavItem) => {
+    if (key === 'home') return pathname === '/';
+    if (key === 'all') return onShop && !cat && !sp.get('max') && !sp.get('q');
+    return onShop && (cat === key || cat === label); // older links used the category name
   };
-  return <NavList isActive={isActive} />;
+  return <NavList categories={categories} isActive={isActive} />;
 }
 
-export default function Header() {
+export default function Header({ categories }: { categories: Category[] }) {
   const { count, subtotal, setOpen } = useCart();
   return (
     <>
@@ -167,8 +170,8 @@ export default function Header() {
               {Icon.menu}
               <span>All Categories</span>
             </Link>
-            <Suspense fallback={<NavList />}>
-              <NavWithParams />
+            <Suspense fallback={<NavList categories={categories} />}>
+              <NavWithParams categories={categories} />
             </Suspense>
             <Link className="nav-deal" href="/shop?max=2000&sort=low">
               Festive Deals

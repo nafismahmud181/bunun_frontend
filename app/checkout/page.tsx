@@ -41,7 +41,13 @@ export default function CheckoutPage() {
       ...form,
       phone: form.phone.trim(),
       payment: pay,
-      items: lines.map((l) => ({ id: l.id, name: l.p.name, size: l.sizeLabel, qty: l.qty, total: l.total })),
+      items: lines.map((l) => ({
+        sku: l.sku,
+        name: l.snapshot.name,
+        size: l.snapshot.label,
+        qty: l.qty,
+        total: l.total,
+      })),
       subtotal,
       delivery,
       total: subtotal + delivery,
@@ -111,9 +117,9 @@ export default function CheckoutPage() {
           <h2>Order Summary</h2>
           {lines.length === 0 && <div className="muted">Your cart is empty.</div>}
           {lines.map((l) => (
-            <div className="sum-line" key={l.key}>
+            <div className="sum-line" key={l.sku}>
               <span>
-                {l.p.name} · {l.sizeLabel} × {l.qty}
+                {l.snapshot.name} · {l.snapshot.label} × {l.qty}
               </span>
               <b style={{ whiteSpace: 'nowrap' }}>৳{fmt(l.total)}</b>
             </div>
