@@ -23,8 +23,8 @@ export default function Footer({ categories }: { categories: Category[] }) {
         <div>
           <h4>Customer Care</h4>
           <Link href="/">Delivery Information</Link>
-          <Link href="/">Return &amp; Exchange Policy</Link>
-          <Link href="/">Track Your Order</Link>
+          <Link href="/refund-policy">Return &amp; Exchange Policy</Link>
+          <Link href="/track">Track Your Order</Link>
           <Link href="/#faq">FAQ</Link>
         </div>
         <div>
@@ -38,6 +38,12 @@ export default function Footer({ categories }: { categories: Category[] }) {
       </div>
       <div className="container footer-bottom">
         <span>© 2026 Bunon. All rights reserved.</span>
+        <span className="footer-legal">
+          <Link href="/about">About</Link>
+          <Link href="/privacy">Privacy Policy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/refund-policy">Refund Policy</Link>
+        </span>
         <span>Trade License No. TRAD/DNCC/000000/2026</span>
       </div>
     </footer>

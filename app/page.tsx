@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCategories, listProducts } from '@/lib/catalogue';
+import { getCategories, getStoreSettings, listProducts } from '@/lib/catalogue';
 import { STORE as S } from '@/lib/store';
 import { bg, catHref, faqs, fmt, imgSrc, productHref, px } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
@@ -15,11 +15,12 @@ const TRUST: [string, string, string][] = [
 ];
 
 export default async function HomePage() {
-  const [categories, all, bestsellers, newArrivals] = await Promise.all([
+  const [categories, all, bestsellers, newArrivals, settings] = await Promise.all([
     getCategories(),
     listProducts({ limit: 100 }),
     listProducts({ section: 'bestsellers' }),
     listProducts({ section: 'new-arrivals' }),
+    getStoreSettings(),
   ]);
   const products = all.items;
   // Discounted products first, then other tagged ones.
@@ -209,7 +210,7 @@ export default async function HomePage() {
 
       <section className="faq-wrap" id="faq">
         <h2 className="h2">Frequently Asked Questions</h2>
-        <Accordion items={faqs()} />
+        <Accordion items={faqs(settings)} />
       </section>
 
       <section className="container section">

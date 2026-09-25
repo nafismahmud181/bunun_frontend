@@ -21,6 +21,20 @@ export async function listProducts(query: ProductQuery = {}) {
   return data ?? fail('product list', response.status);
 }
 
+/** Free-delivery threshold, hotline and delivery zones. */
+export async function getStoreSettings() {
+  const { data, response } = await api.GET('/api/v1/settings', { fetch: cached });
+  return data ?? fail('settings', response.status);
+}
+
+/** Divisions, districts and areas for the address picker (rarely changes, so cached for an hour). */
+export async function getLocations() {
+  const { data, response } = await api.GET('/api/v1/locations', {
+    fetch: (input: Request) => fetch(input, { next: { revalidate: 3600, tags: ['catalogue'] } }),
+  });
+  return data ?? fail('locations', response.status);
+}
+
 /** A product by slug, or null if it doesn't exist or isn't for sale. */
 export async function getProduct(slug: string) {
   const { data, response } = await api.GET('/api/v1/products/{slug}', {

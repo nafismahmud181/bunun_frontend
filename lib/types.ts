@@ -7,6 +7,15 @@ export type ProductSummary = Schemas['ProductSummary'];
 export type ProductDetail = Schemas['ProductDetail'];
 export type Variant = Schemas['Variant'];
 export type CartVariant = Schemas['CartVariant'];
+export type Cart = Schemas['Cart'];
+export type CartLine = Schemas['CartLine'];
+export type Quote = Schemas['Quote'];
+export type StoreSettings = Schemas['StoreSettings'];
+export type LocationTree = Schemas['LocationTree'];
+export type OrderReceipt = Schemas['OrderReceipt'];
+export type TrackedOrder = Schemas['TrackedOrder'];
+export type OrderStatus = Schemas['OrderStatus'];
+export type ApiErrorBody = Schemas['Error'];
 
 export interface Review {
   name: string;
@@ -15,47 +24,15 @@ export interface Review {
   text: string;
 }
 
-/** Store settings that aren't in the database yet (delivery zones and reviews come in Phases 2 and 5). */
+/** Content that isn't in the database yet (the sale banner and reviews come with the CMS in Phase 5). */
 export interface Store {
-  freeShipAt: number;
   saleEnds: string;
-  delivery: Record<DeliveryArea, number>;
   reviews: Review[];
 }
 
-export type DeliveryArea = 'dhaka' | 'outside';
-
-export type PaymentMethod = 'cod' | 'bkash' | 'nagad' | 'card';
-
-/** What the cart stores: a variant, a quantity, and a copy of what to show until the API refreshes it. */
-export interface CartItem {
-  sku: string;
-  qty: number;
-  snapshot: CartSnapshot;
-}
-
-export interface CartSnapshot {
-  slug: string;
-  name: string;
-  label: string;
-  price: number;
-  image: string | null;
-}
-
-/** A cart item with its line total. */
-export interface CartLine extends CartItem {
-  total: number;
-}
-
-export interface Order {
-  no: string;
-  name: string;
+/** The order just placed, kept for the confirmation page. */
+export interface LastOrder {
+  orderNo: string;
   phone: string;
-  area: DeliveryArea;
-  address: string;
-  payment: PaymentMethod;
-  items: { sku: string; name: string; size: string; qty: number; total: number }[];
-  subtotal: number;
-  delivery: number;
   total: number;
 }

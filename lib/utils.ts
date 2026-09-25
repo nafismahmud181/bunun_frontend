@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { STORE as S } from './store';
+import type { StoreSettings } from './types';
 
 export const fmt = (n: number) => Math.round(n).toLocaleString('en-IN');
 export const px = (id: number, w = 800) =>
@@ -19,7 +19,9 @@ export const catHref = (slug: string) => '/shop?cat=' + encodeURIComponent(slug)
 export const productHref = (slug: string) => `/product/${slug}`;
 export const bg = (url: string): CSSProperties => ({ backgroundImage: `url('${url}')` });
 
-export const faqs = (): [string, string][] => [
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
+export const faqs = (s: StoreSettings): [string, string][] => [
   [
     'Do you offer Cash on Delivery?',
     'Yes. Cash on Delivery is available in all 64 districts. You can also pay in advance with bKash, Nagad or card.',
@@ -30,7 +32,10 @@ export const faqs = (): [string, string][] => [
   ],
   [
     'What are the delivery charges?',
-    `৳${S.delivery.dhaka} inside Dhaka and ৳${S.delivery.outside} outside Dhaka. Delivery is free on orders above ৳${fmt(S.freeShipAt)}.`,
+    [
+      s.zones.map((z) => `৳${z.fee} ${lowerFirst(z.name.replace(/ City$/, ''))}`).join(' and ') + '.',
+      `Delivery is free on orders above ৳${fmt(s.freeDeliveryThreshold)}.`,
+    ].join(' '),
   ],
   [
     'Can I return or exchange a product?',

@@ -233,10 +233,510 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Public store settings: free-delivery threshold, hotline, delivery zones */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['StoreSettings'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/locations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Divisions → districts → areas for the address picker, with delivery zones */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['LocationTree'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cart': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** The current cart */
+    get: {
+      parameters: {
+        query?: never;
+        header?: {
+          'x-cart-token'?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Cart'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cart/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Add units of a variant (creates the cart if needed) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: {
+          'x-cart-token'?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            sku: string;
+            /** @default 1 */
+            qty?: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Cart'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cart/items/{sku}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Set the quantity of a variant (0 removes it) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: {
+          'x-cart-token'?: string;
+        };
+        path: {
+          sku: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description 0 removes the item */
+            qty: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Cart'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    post?: never;
+    /** Remove a variant from the cart */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: {
+          'x-cart-token'?: string;
+        };
+        path: {
+          sku: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Cart'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cart/quote': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Delivery fee and total for the cart, delivered to an area */
+    get: {
+      parameters: {
+        query: {
+          areaId: number;
+        };
+        header?: {
+          'x-cart-token'?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Quote'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/checkout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Place a Cash on Delivery order from the cart
+     * @description Returns 201 for a new order and 200 when the Idempotency-Key was already used (the same order is returned).
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header: {
+          'x-cart-token': string;
+          /** @description A new random value (e.g. a UUID) per order attempt; resend the same value when retrying */
+          'idempotency-key': string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            name: string;
+            phone: string;
+            areaId: number;
+            /** @description House, road, area */
+            address: string;
+            notes?: string;
+            /**
+             * @description Only Cash on Delivery until Phase 4
+             * @enum {string}
+             */
+            paymentMethod: 'cod';
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['OrderReceipt'];
+          };
+        };
+        /** @description Default Response */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['OrderReceipt'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        429: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/orders/track': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Order status by order number and the phone number used */
+    get: {
+      parameters: {
+        query: {
+          orderNo: string;
+          phone: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['TrackedOrder'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    ErrorInput: {
+      statusCode: number;
+      error: string;
+      code: string;
+      message: string;
+      details?: {
+        [key: string]: unknown;
+      };
+    };
     ImageInput: {
       url: string;
       alt: string | null;
@@ -338,6 +838,136 @@ export interface components {
       statusCode: 404;
       error: string;
       message: string;
+    };
+    CartLineInput: {
+      sku: string;
+      qty: number;
+      name: string;
+      slug: string;
+      label: string;
+      image: components['schemas']['ImageInput'] | null;
+      /** @description Whole taka */
+      unitPrice: number;
+      /** @description Whole taka */
+      lineTotal: number;
+      stockStatus: components['schemas']['StockStatusInput'];
+      stockLeft?: number;
+      /** @description False when fewer are in stock than the quantity in the cart */
+      available: boolean;
+    };
+    CartInput: {
+      items: components['schemas']['CartLineInput'][];
+      itemCount: number;
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Only when this request created the cart: store it and send it back */
+      token?: string;
+    };
+    QuoteInput: {
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      freeDelivery: boolean;
+      zone: {
+        key: string;
+        name: string;
+        estimate: string;
+      };
+    };
+    /** @enum {string} */
+    OrderStatusInput:
+      'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned' | 'refunded';
+    OrderReceiptInput: {
+      orderNo: string;
+      status: components['schemas']['OrderStatusInput'];
+      /** @enum {string} */
+      paymentMethod: 'cod' | 'bkash' | 'nagad' | 'card';
+      phone: string;
+      items: {
+        sku: string;
+        name: string;
+        label: string;
+        qty: number;
+        /** @description Whole taka */
+        lineTotal: number;
+      }[];
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      createdAt: string;
+    };
+    TrackedOrderInput: {
+      orderNo: string;
+      status: components['schemas']['OrderStatusInput'];
+      /** @enum {string} */
+      paymentMethod: 'cod' | 'bkash' | 'nagad' | 'card';
+      items: {
+        sku: string;
+        name: string;
+        label: string;
+        qty: number;
+        /** @description Whole taka */
+        lineTotal: number;
+      }[];
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      createdAt: string;
+      /** @enum {string} */
+      paymentStatus: 'unpaid' | 'partially_paid' | 'paid' | 'refunded';
+      district: string;
+      area: string;
+      history: {
+        status: components['schemas']['OrderStatusInput'];
+        at: string;
+      }[];
+    };
+    DeliveryZoneInput: {
+      key: string;
+      name: string;
+      /** @description Whole taka */
+      fee: number;
+      estimate: string;
+    };
+    StoreSettingsInput: {
+      /** @description Whole taka */
+      freeDeliveryThreshold: number;
+      hotline: string;
+      zones: components['schemas']['DeliveryZoneInput'][];
+    };
+    LocationTreeInput: {
+      id: number;
+      name: string;
+      nameBn: string | null;
+      districts: {
+        id: number;
+        name: string;
+        nameBn: string | null;
+        areas: {
+          id: number;
+          name: string;
+          nameBn: string | null;
+          zone: string;
+        }[];
+      }[];
+    }[];
+    Error: {
+      statusCode: number;
+      error: string;
+      code: string;
+      message: string;
+      details?: {
+        [key: string]: unknown;
+      };
     };
     Image: {
       url: string;
@@ -441,6 +1071,127 @@ export interface components {
       error: string;
       message: string;
     };
+    CartLine: {
+      sku: string;
+      qty: number;
+      name: string;
+      slug: string;
+      label: string;
+      image: components['schemas']['Image'] | null;
+      /** @description Whole taka */
+      unitPrice: number;
+      /** @description Whole taka */
+      lineTotal: number;
+      stockStatus: components['schemas']['StockStatus'];
+      stockLeft?: number;
+      /** @description False when fewer are in stock than the quantity in the cart */
+      available: boolean;
+    };
+    Cart: {
+      items: components['schemas']['CartLine'][];
+      itemCount: number;
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Only when this request created the cart: store it and send it back */
+      token?: string;
+    };
+    Quote: {
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      freeDelivery: boolean;
+      zone: {
+        key: string;
+        name: string;
+        estimate: string;
+      };
+    };
+    /** @enum {string} */
+    OrderStatus:
+      'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned' | 'refunded';
+    OrderReceipt: {
+      orderNo: string;
+      status: components['schemas']['OrderStatus'];
+      /** @enum {string} */
+      paymentMethod: 'cod' | 'bkash' | 'nagad' | 'card';
+      phone: string;
+      items: {
+        sku: string;
+        name: string;
+        label: string;
+        qty: number;
+        /** @description Whole taka */
+        lineTotal: number;
+      }[];
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      createdAt: string;
+    };
+    TrackedOrder: {
+      orderNo: string;
+      status: components['schemas']['OrderStatus'];
+      /** @enum {string} */
+      paymentMethod: 'cod' | 'bkash' | 'nagad' | 'card';
+      items: {
+        sku: string;
+        name: string;
+        label: string;
+        qty: number;
+        /** @description Whole taka */
+        lineTotal: number;
+      }[];
+      /** @description Whole taka */
+      subtotal: number;
+      /** @description Whole taka */
+      deliveryFee: number;
+      /** @description Whole taka */
+      total: number;
+      createdAt: string;
+      /** @enum {string} */
+      paymentStatus: 'unpaid' | 'partially_paid' | 'paid' | 'refunded';
+      district: string;
+      area: string;
+      history: {
+        status: components['schemas']['OrderStatus'];
+        at: string;
+      }[];
+    };
+    DeliveryZone: {
+      key: string;
+      name: string;
+      /** @description Whole taka */
+      fee: number;
+      estimate: string;
+    };
+    StoreSettings: {
+      /** @description Whole taka */
+      freeDeliveryThreshold: number;
+      hotline: string;
+      zones: components['schemas']['DeliveryZone'][];
+    };
+    LocationTree: {
+      id: number;
+      name: string;
+      nameBn: string | null;
+      districts: {
+        id: number;
+        name: string;
+        nameBn: string | null;
+        areas: {
+          id: number;
+          name: string;
+          nameBn: string | null;
+          zone: string;
+        }[];
+      }[];
+    }[];
   };
   responses: never;
   parameters: never;

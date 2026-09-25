@@ -1,24 +1,35 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { api } from '@/lib/api/client';
-import { parseSavedCart, refreshCart } from '@/lib/cart';
-import type { CartItem, CartLine, CartSnapshot, Order } from '@/lib/types';
+import { parseSavedCart } from '@/lib/cart';
+import type { Cart, CartLine, LastOrder, StoreSettings } from '@/lib/types';
 import CartDrawer from './CartDrawer';
 
+// The cart lives on the server (Phase 2). The browser keeps only the cart's token.
+const TOKEN_KEY = 'bunon_cart_token';
+// Carts saved in the browser before the server cart existed; moved to the server once.
+const LEGACY_CART_KEY = 'bunon_cart';
+const LAST_ORDER_KEY = 'bunon_last_order';
+
 interface CartContextValue {
+  settings: StoreSettings;
   lines: CartLine[];
   subtotal: number;
   count: number;
-  add: (sku: string, qty: number, snapshot: CartSnapshot) => void;
+  /** The cart token, for checkout. */
+  token: string | null;
+  /** Adds units of a variant; resolves to false (after showing why) if it couldn't. */
+  add: (sku: string, qty: number) => Promise<boolean>;
   changeQty: (sku: string, d: number) => void;
   remove: (sku: string) => void;
-  clear: () => void;
+  /** Re-reads the cart after a server action (e.g. checkout emptied it). */
+  reload: () => Promise<void>;
   open: boolean;
   setOpen: (open: boolean) => void;
   showToast: (msg: string) => void;
-  lastOrder: Order | null;
-  saveOrder: (order: Order) => void;
+  lastOrder: LastOrder | null;
+  saveOrder: (order: LastOrder) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -28,48 +39,80 @@ export const useCart = () => {
   return ctx;
 };
 
-export default function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [ready, setReady] = useState(false);
+const EMPTY: Cart = { items: [], itemCount: 0, subtotal: 0 };
+const readStorage = (key: string, store: 'local' | 'session' = 'local') => {
+  try {
+    return (store === 'local' ? localStorage : sessionStorage).getItem(key);
+  } catch {
+    return null;
+  }
+};
+const NETWORK_ERROR = 'Could not reach the store. Please check your connection.';
+
+export default function CartProvider({ children, settings }: { children: ReactNode; settings: StoreSettings }) {
+  const [cart, setCart] = useState<Cart>(EMPTY);
+  const [token, setToken] = useState<string | null>(null);
+  const tokenRef = useRef<string | null>(null);
   const [open, setOpen] = useState(false);
   const [toast, setToast] = useState('');
-  const [lastOrder, setLastOrder] = useState<Order | null>(null);
+  const [lastOrder, setLastOrder] = useState<LastOrder | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Browser storage is read after mount so the server HTML and the first client render match.
-  // Phase 2 replaces this with the server cart.
-  useEffect(() => {
-    try {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart(parseSavedCart(JSON.parse(localStorage.getItem('bunon_cart') || '[]')));
-    } catch {}
-    try {
-      setLastOrder(JSON.parse(sessionStorage.getItem('bunon_last_order') || 'null'));
-    } catch {}
-    setReady(true);
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(''), 2200);
   }, []);
 
-  useEffect(() => {
-    if (ready) localStorage.setItem('bunon_cart', JSON.stringify(cart));
-  }, [cart, ready]);
+  // Applies a cart response, remembering the token when the server has just created the cart.
+  const apply = useCallback((next: Cart) => {
+    if (next.token) {
+      tokenRef.current = next.token;
+      setToken(next.token);
+      try {
+        localStorage.setItem(TOKEN_KEY, next.token);
+      } catch {}
+    }
+    setCart(next);
+  }, []);
 
-  // Once the saved cart is loaded, refresh prices and names from the API and drop items that
-  // are no longer for sale. If the API is unreachable, the saved copy is kept.
-  const [refreshed, setRefreshed] = useState(false);
+  const headers = () => (tokenRef.current ? { 'x-cart-token': tokenRef.current } : undefined);
+
+  const reload = useCallback(async () => {
+    if (!tokenRef.current) return setCart(EMPTY);
+    const { data } = await api.GET('/api/v1/cart', { headers: { 'x-cart-token': tokenRef.current } });
+    if (data) setCart(data);
+  }, []);
+
+  // Browser storage is read after mount so the server HTML and the first client render match.
   useEffect(() => {
-    if (!ready || refreshed) return;
-    const skus = cart.map((c) => c.sku);
-    if (!skus.length) return;
-    const ctrl = new AbortController();
-    api
-      .GET('/api/v1/variants', { params: { query: { skus: skus.join(',') } }, signal: ctrl.signal })
-      .then(({ data }) => {
-        if (data) setCart((c) => refreshCart(c, data));
-        setRefreshed(true);
-      })
-      .catch(() => {});
-    return () => ctrl.abort();
-  }, [ready, refreshed, cart]);
+    const saved = readStorage(TOKEN_KEY);
+    tokenRef.current = saved;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setToken(saved);
+    try {
+      setLastOrder(JSON.parse(readStorage(LAST_ORDER_KEY, 'session') || 'null'));
+    } catch {}
+
+    (async () => {
+      // Move a cart saved by the old storefront onto the server, then forget it.
+      let legacy: ReturnType<typeof parseSavedCart> = [];
+      try {
+        legacy = parseSavedCart(JSON.parse(readStorage(LEGACY_CART_KEY) || '[]'));
+      } catch {}
+      for (const item of legacy) {
+        const { data } = await api.POST('/api/v1/cart/items', {
+          headers: tokenRef.current ? { 'x-cart-token': tokenRef.current } : undefined,
+          body: { sku: item.sku, qty: Math.min(item.qty, 20) },
+        });
+        if (data) apply(data);
+      }
+      try {
+        localStorage.removeItem(LEGACY_CART_KEY);
+      } catch {}
+      await reload();
+    })().catch(() => {});
+  }, [apply, reload]);
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -78,42 +121,57 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const add = (sku: string, qty: number, snapshot: CartSnapshot) =>
-    setCart((c) => {
-      const ex = c.find((x) => x.sku === sku);
-      return ex
-        ? c.map((x) => (x.sku === sku ? { ...x, qty: x.qty + qty, snapshot } : x))
-        : [...c, { sku, qty, snapshot }];
-    });
-  const changeQty = (sku: string, d: number) =>
-    setCart((c) => c.map((x) => (x.sku === sku ? { ...x, qty: Math.max(1, x.qty + d) } : x)));
-  const remove = (sku: string) => setCart((c) => c.filter((x) => x.sku !== sku));
-  const clear = () => setCart([]);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToast(''), 2200);
+  const add = async (sku: string, qty: number) => {
+    try {
+      const { data, error } = await api.POST('/api/v1/cart/items', { headers: headers(), body: { sku, qty } });
+      if (data) {
+        apply(data);
+        return true;
+      }
+      showToast(error?.message ?? 'Could not add to cart');
+    } catch {
+      showToast(NETWORK_ERROR);
+    }
+    return false;
   };
 
-  const saveOrder = (order: Order) => {
+  const setQty = async (sku: string, qty: number) => {
+    try {
+      const { data, error } = await api.PUT('/api/v1/cart/items/{sku}', {
+        headers: headers(),
+        params: { path: { sku } },
+        body: { qty },
+      });
+      if (data) apply(data);
+      else showToast(error?.message ?? 'Could not update the cart');
+    } catch {
+      showToast(NETWORK_ERROR);
+    }
+  };
+
+  const changeQty = (sku: string, d: number) => {
+    const line = cart.items.find((l) => l.sku === sku);
+    if (line) void setQty(sku, Math.max(1, line.qty + d));
+  };
+  const remove = (sku: string) => void setQty(sku, 0);
+
+  const saveOrder = (order: LastOrder) => {
     setLastOrder(order);
-    sessionStorage.setItem('bunon_last_order', JSON.stringify(order));
+    try {
+      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
+    } catch {}
   };
-
-  // Items converted from an old cart have no snapshot until the API refresh fills it in.
-  const lines: CartLine[] = cart.filter((c) => c.snapshot.name).map((c) => ({ ...c, total: c.snapshot.price * c.qty }));
-  const subtotal = lines.reduce((a, l) => a + l.total, 0);
-  const count = lines.reduce((a, l) => a + l.qty, 0);
 
   const value: CartContextValue = {
-    lines,
-    subtotal,
-    count,
+    settings,
+    lines: cart.items,
+    subtotal: cart.subtotal,
+    count: cart.itemCount,
+    token,
     add,
     changeQty,
     remove,
-    clear,
+    reload,
     open,
     setOpen,
     showToast,

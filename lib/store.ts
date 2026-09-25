@@ -1,11 +1,9 @@
-// Store settings that aren't in the database yet. Products and categories come from the API.
-// Delivery zones move to the backend in Phase 2, and reviews in Phase 5.
+// Content that isn't in the database yet. Products, categories, delivery fees and the
+// free-delivery threshold come from the API; the sale banner and reviews move there in Phase 5.
 import type { Store } from './types';
 
 export const STORE: Store = {
-  freeShipAt: 3000,
   saleEnds: '2026-10-21T23:59:59+06:00', // homepage countdown end (Bangladesh time)
-  delivery: { dhaka: 70, outside: 130 },
   reviews: [
     {
       name: 'Nusrat Jahan',

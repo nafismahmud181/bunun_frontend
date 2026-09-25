@@ -1993,3 +1993,124 @@ a.card-name {
 .crumbs a:hover {
   color: var(--green);
 }
+
+/* Cart line warnings (server cart, Phase 2) */
+.line-item small.line-warn {
+  display: block;
+  color: var(--red);
+}
+
+/* Checkout address picker: division, district, area side by side (stacked on phones) */
+.address-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 640px) {
+  .address-row {
+    grid-template-columns: 1fr;
+  }
+}
+textarea.input {
+  font: inherit;
+  font-size: 14px;
+  height: auto;
+  padding-top: 10px;
+  resize: vertical;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Track order page */
+.track {
+  max-width: 760px;
+  padding-top: 28px;
+  padding-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.track-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+}
+@media (max-width: 640px) {
+  .track-form {
+    grid-template-columns: 1fr;
+  }
+}
+.track-steps {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.track-steps li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 22px;
+  position: relative;
+  color: var(--muted-3);
+}
+.track-steps li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--line-2);
+}
+.track-steps li.is-done {
+  color: var(--ink);
+}
+.track-steps li.is-done::before {
+  background: var(--green);
+  border-color: var(--green);
+}
+.track-steps li.is-stopped::before {
+  background: var(--red);
+  border-color: var(--red);
+}
+.track-steps small {
+  color: var(--muted-2);
+  font-size: 12px;
+}
+
+/* Legal pages */
+.legal {
+  max-width: 760px;
+  padding-top: 28px;
+  padding-bottom: 64px;
+}
+.legal h2 {
+  font-size: 18px;
+  margin: 28px 0 8px;
+}
+.legal p {
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-legal a {
+  color: inherit;
+}
+.footer-legal a:hover {
+  color: #fff;
+}

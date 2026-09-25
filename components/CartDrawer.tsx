@@ -1,16 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { STORE as S } from '@/lib/store';
 import { bg, fmt, imgSrc } from '@/lib/utils';
 import { useCart } from './CartProvider';
 
 export default function CartDrawer() {
-  const { open, setOpen, lines, subtotal, count, changeQty, remove, showToast } = useCart();
+  const { open, setOpen, lines, subtotal, count, changeQty, remove, showToast, settings } = useCart();
+  const freeAt = settings.freeDeliveryThreshold;
   const router = useRouter();
   if (!open) return null;
 
-  const pct = Math.min(100, Math.round((subtotal / S.freeShipAt) * 100));
+  const pct = Math.min(100, Math.round((subtotal / freeAt) * 100));
   const goCheckout = () => {
     if (!lines.length) return showToast('Your cart is empty');
     setOpen(false);
@@ -29,9 +29,9 @@ export default function CartDrawer() {
         </div>
         <div className="ship-bar">
           <div>
-            {subtotal >= S.freeShipAt
+            {subtotal >= freeAt
               ? 'You have unlocked FREE delivery!'
-              : `Add ৳${fmt(S.freeShipAt - subtotal)} more for free delivery`}
+              : `Add ৳${fmt(freeAt - subtotal)} more for free delivery`}
           </div>
           <div className="bar">
             <div style={{ width: pct + '%' }} />
@@ -41,10 +41,15 @@ export default function CartDrawer() {
           {lines.length === 0 && <div className="empty">Your cart is empty.</div>}
           {lines.map((l) => (
             <div className="line-item" key={l.sku}>
-              <div className="line-img" style={l.snapshot.image ? bg(imgSrc(l.snapshot.image, 300)) : undefined} />
+              <div className="line-img" style={l.image ? bg(imgSrc(l.image.url, 300)) : undefined} />
               <div>
-                <b>{l.snapshot.name}</b>
-                <small>{l.snapshot.label}</small>
+                <b>{l.name}</b>
+                <small>{l.label}</small>
+                {!l.available && (
+                  <small className="line-warn">
+                    {l.stockStatus === 'out' ? 'Out of stock' : `Only ${l.stockLeft} left`}: please reduce the quantity
+                  </small>
+                )}
                 <div className="line-qty">
                   <button onClick={() => changeQty(l.sku, -1)} aria-label="Decrease">
                     −
@@ -58,7 +63,7 @@ export default function CartDrawer() {
                   </button>
                 </div>
               </div>
-              <div className="line-total">৳{fmt(l.total)}</div>
+              <div className="line-total">৳{fmt(l.lineTotal)}</div>
             </div>
           ))}
         </div>

@@ -28,10 +28,8 @@ export default function ProductCard({ p, forceNew = false }: { p: ProductSummary
         <button
           className="add-btn"
           disabled={!first || first.stockStatus === 'out'}
-          onClick={() => {
-            if (!first) return;
-            add(first.sku, 1, { slug: p.slug, name: p.name, label: first.label, price: first.price, image });
-            showToast(p.name + ' added to cart');
+          onClick={async () => {
+            if (first && (await add(first.sku, 1))) showToast(p.name + ' added to cart');
           }}
         >
           {first && first.stockStatus !== 'out' ? 'Add to Cart' : 'Out of Stock'}

@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Suspense, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { STORE as S } from '@/lib/store';
 import { catHref, fmt } from '@/lib/utils';
 import type { Category } from '@/lib/types';
 import { useCart } from './CartProvider';
@@ -108,15 +107,15 @@ function NavWithParams({ categories }: { categories: Category[] }) {
 }
 
 export default function Header({ categories }: { categories: Category[] }) {
-  const { count, subtotal, setOpen } = useCart();
+  const { count, subtotal, setOpen, settings } = useCart();
   return (
     <>
       <div className="topbar">
         <div className="container">
-          <span>Free delivery over ৳{fmt(S.freeShipAt)} · Cash on Delivery in all 64 districts</span>
+          <span>Free delivery over ৳{fmt(settings.freeDeliveryThreshold)} · Cash on Delivery in all 64 districts</span>
           <span className="topbar-links">
-            <span>Hotline: 09612-345678</span>
-            <Link href="/">Track Order</Link>
+            <span>Hotline: {settings.hotline}</span>
+            <Link href="/track">Track Order</Link>
             <Link href="/">Help</Link>
             <Link href="/">বাংলা</Link>
           </span>

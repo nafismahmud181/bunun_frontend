@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { STORE as S } from '@/lib/store';
 import { bg, catHref, fmt, imgSrc } from '@/lib/utils';
 import type { ProductDetail as Product, ProductSummary, Variant } from '@/lib/types';
 import { useCart } from './CartProvider';
@@ -22,7 +21,7 @@ interface Props {
 
 export default function ProductDetail({ p, others, categoryImage }: Props) {
   const router = useRouter();
-  const { add, setOpen } = useCart();
+  const { add, setOpen, settings } = useCart();
   const [img, setImg] = useState(0);
   const [size, setSize] = useState(0);
   const [qty, setQty] = useState(1);
@@ -40,15 +39,7 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
     .filter((v, i, a) => a.indexOf(v) === i)
     .slice(0, 4)
     .map((url) => imgSrc(url, 1200));
-  const addToCart = () =>
-    variant &&
-    add(variant.sku, qty, {
-      slug: p.slug,
-      name: p.name,
-      label: variant.label,
-      price: variant.price,
-      image: p.image ? imgSrc(p.image.url) : null,
-    });
+  const addToCart = async () => !!variant && (await add(variant.sku, qty));
   const details: [string, string][] = [
     ['Product Details', p.description + ' Colour may vary slightly due to the handmade nature of the product.'],
     [
@@ -133,9 +124,8 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
             <button
               className="btn btn-green-outline"
               disabled={soldOut}
-              onClick={() => {
-                addToCart();
-                setOpen(true);
+              onClick={async () => {
+                if (await addToCart()) setOpen(true);
               }}
             >
               {soldOut ? 'Out of Stock' : 'Add to Cart'}
@@ -143,21 +133,19 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
             <button
               className="btn btn-primary"
               disabled={soldOut}
-              onClick={() => {
-                addToCart();
-                router.push('/checkout');
+              onClick={async () => {
+                if (await addToCart()) router.push('/checkout');
               }}
             >
               Buy Now · ৳{fmt(unit * qty)}
             </button>
           </div>
           <div className="ship-info">
-            <span>
-              <b>Inside Dhaka:</b> ৳{S.delivery.dhaka} · 1–2 days
-            </span>
-            <span>
-              <b>Outside Dhaka:</b> ৳{S.delivery.outside} · 3–5 days
-            </span>
+            {settings.zones.map((z) => (
+              <span key={z.key}>
+                <b>{z.name.replace(/ City$/, '')}:</b> ৳{z.fee} · {z.estimate}
+              </span>
+            ))}
             <span>
               <b>Payment:</b> COD, bKash, Nagad, Card
             </span>
