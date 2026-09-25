@@ -9,7 +9,12 @@ import { getCategories, getStoreSettings } from '@/lib/catalogue';
 import type { Category, StoreSettings } from '@/lib/types';
 
 // Used only if the API can't be reached, so the header and cart still render.
-const FALLBACK_SETTINGS: StoreSettings = { freeDeliveryThreshold: 3000, hotline: '09612-345678', zones: [] };
+const FALLBACK_SETTINGS: StoreSettings = {
+  freeDeliveryThreshold: 3000,
+  hotline: '09612-345678',
+  zones: [],
+  store: { name: 'Bunon', address: '', email: '', tradeLicence: '' },
+};
 
 export const metadata: Metadata = {
   title: { default: 'Bunon — Handcrafted Home Décor in Bangladesh', template: '%s | Bunon' },
