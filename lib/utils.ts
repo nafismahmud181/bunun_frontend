@@ -4,8 +4,19 @@ import type { StoreSettings } from './types';
 export const fmt = (n: number) => Math.round(n).toLocaleString('en-IN');
 export const px = (id: number, w = 800) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
-/** An image URL at the given width. Pexels URLs are resized through their `w` parameter; others are returned as-is. */
+// Uploaded images are stored at these widths, named …-<width>.webp (see the backend's services/images.ts).
+const UPLOAD_WIDTHS = [400, 800, 1200];
+
+/**
+ * An image URL at (at least) the given width. Uploaded images switch to the smallest stored size
+ * that is wide enough; Pexels URLs use their `w` parameter; anything else is returned as-is.
+ */
 export const imgSrc = (url: string, w = 800) => {
+  const uploaded = /-(\d+)\.webp$/.exec(url);
+  if (uploaded && UPLOAD_WIDTHS.includes(Number(uploaded[1]))) {
+    const size = UPLOAD_WIDTHS.find((s) => s >= w) ?? UPLOAD_WIDTHS[UPLOAD_WIDTHS.length - 1];
+    return url.replace(/-\d+\.webp$/, `-${size}.webp`);
+  }
   try {
     const u = new URL(url);
     if (u.hostname !== 'images.pexels.com') return url;

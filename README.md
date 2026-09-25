@@ -33,7 +33,8 @@ CI runs `lint`, `format:check`, `typecheck` and `build` on every push and pull r
 ## How catalogue data flows
 
 - Pages are rendered on request. API responses are cached for 60 seconds under the `catalogue` tag (`lib/catalogue.ts`).
-- `POST /api/revalidate` with header `x-revalidate-secret: $REVALIDATE_SECRET` refreshes that cache. The admin panel will call it after saving a product. The next visitor still gets the cached copy while fresh data loads, and visitors after that see the change.
+- `POST /api/revalidate` with header `x-revalidate-secret: $REVALIDATE_SECRET` drops that cache. The API calls it after any admin change to products, categories or stock, so the next visitor sees the change. Set the same `REVALIDATE_SECRET` here and in the backend.
+- A single product (`/product/<slug>`) is always fetched fresh, so an archived or unpublished product disappears at once and prices and stock are current. (A cached copy could outlive an archived product: when Next.js refreshes a cache entry and gets a 404, it keeps serving the old one.)
 - After changing the backend API, run `npm run openapi` in the backend, then `npm run gen:api` here, and commit `lib/api/schema.d.ts`.
 
 ## Structure
