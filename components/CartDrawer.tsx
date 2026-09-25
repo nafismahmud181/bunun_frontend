@@ -23,11 +23,19 @@ export default function CartDrawer() {
       <aside className="drawer-panel">
         <div className="drawer-head">
           <span>Shopping Cart ({count})</span>
-          <button className="drawer-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
+          <button className="drawer-close" onClick={() => setOpen(false)} aria-label="Close">
+            ×
+          </button>
         </div>
         <div className="ship-bar">
-          <div>{subtotal >= S.freeShipAt ? 'You have unlocked FREE delivery!' : `Add ৳${fmt(S.freeShipAt - subtotal)} more for free delivery`}</div>
-          <div className="bar"><div style={{ width: pct + '%' }} /></div>
+          <div>
+            {subtotal >= S.freeShipAt
+              ? 'You have unlocked FREE delivery!'
+              : `Add ৳${fmt(S.freeShipAt - subtotal)} more for free delivery`}
+          </div>
+          <div className="bar">
+            <div style={{ width: pct + '%' }} />
+          </div>
         </div>
         <div className="drawer-items">
           {lines.length === 0 && <div className="empty">Your cart is empty.</div>}
@@ -38,10 +46,16 @@ export default function CartDrawer() {
                 <b>{l.p.name}</b>
                 <small>{l.sizeLabel}</small>
                 <div className="line-qty">
-                  <button onClick={() => changeQty(l.key, -1)} aria-label="Decrease">−</button>
+                  <button onClick={() => changeQty(l.key, -1)} aria-label="Decrease">
+                    −
+                  </button>
                   <span>{l.qty}</span>
-                  <button onClick={() => changeQty(l.key, 1)} aria-label="Increase">+</button>
-                  <button className="remove" onClick={() => remove(l.key)}>Remove</button>
+                  <button onClick={() => changeQty(l.key, 1)} aria-label="Increase">
+                    +
+                  </button>
+                  <button className="remove" onClick={() => remove(l.key)}>
+                    Remove
+                  </button>
                 </div>
               </div>
               <div className="line-total">৳{fmt(l.total)}</div>
@@ -49,9 +63,20 @@ export default function CartDrawer() {
           ))}
         </div>
         <div className="drawer-foot">
-          <div className="sum-line"><span>Subtotal</span><span>৳{fmt(subtotal)}</span></div>
-          <button className="btn btn-primary" onClick={goCheckout}>Proceed to Checkout</button>
-          <button className="btn btn-outline" onClick={() => setOpen(false)} style={{ height: 44, padding: 0, fontSize: 14 }}>Continue Shopping</button>
+          <div className="sum-line">
+            <span>Subtotal</span>
+            <span>৳{fmt(subtotal)}</span>
+          </div>
+          <button className="btn btn-primary" onClick={goCheckout}>
+            Proceed to Checkout
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => setOpen(false)}
+            style={{ height: 44, padding: 0, fontSize: 14 }}
+          >
+            Continue Shopping
+          </button>
         </div>
       </aside>
     </div>

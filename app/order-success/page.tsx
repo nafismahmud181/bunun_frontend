@@ -13,7 +13,9 @@ export default function OrderSuccessPage() {
         Order #{lastOrder?.no || '—'} · We&apos;ll call {lastOrder?.phone || 'you'} to confirm before dispatch.
         You&apos;ll receive SMS updates on delivery.
       </p>
-      <Link className="btn btn-primary" href="/shop" style={{ marginTop: 8 }}>Continue Shopping</Link>
+      <Link className="btn btn-primary" href="/shop" style={{ marginTop: 8 }}>
+        Continue Shopping
+      </Link>
     </section>
   );
 }

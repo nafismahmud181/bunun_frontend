@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { STORE as S } from '@/lib/store';
-import { bg, byId, catHref, faqs, fmt, imgOf, px } from '@/lib/utils';
+import { bg, byIds, catHref, faqs, fmt, imgOf, px } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import Countdown from '@/components/Countdown';
 import Accordion from '@/components/Accordion';
 import Newsletter from '@/components/Newsletter';
 
-const TRUST = [
+const TRUST: [string, string, string][] = [
   ['COD', 'Cash on Delivery', 'Pay at your doorstep'],
   ['64', 'Nationwide Delivery', 'All 64 districts'],
   ['৳', 'bKash & Nagad', 'Secure mobile payment'],
@@ -14,7 +14,10 @@ const TRUST = [
 ];
 
 export default function HomePage() {
-  const picks = S.products.filter((p) => p.was).concat(S.products.filter((p) => !p.was && p.tag)).slice(0, 4);
+  const picks = S.products
+    .filter((p) => p.was)
+    .concat(S.products.filter((p) => !p.was && p.tag))
+    .slice(0, 4);
 
   return (
     <>
@@ -22,12 +25,18 @@ export default function HomePage() {
         <div className="container hero2-grid">
           <div className="hero2-main">
             <div className="eyebrow">Festive Sale · Limited Time</div>
-            <h1>Up to <em>25% off</em> handcrafted runners, kantha &amp; jute</h1>
+            <h1>
+              Up to <em>25% off</em> handcrafted runners, kantha &amp; jute
+            </h1>
             <p>Dress your home for the season with pieces made by artisans in Jashore, Tangail and Rangpur.</p>
             <Countdown end={S.saleEnds} />
             <div className="hero2-actions">
-              <Link className="btn btn-primary" href="/shop">Shop the Sale</Link>
-              <Link className="btn btn-outline" href={catHref('Table Runners')}>Table Runners</Link>
+              <Link className="btn btn-primary" href="/shop">
+                Shop the Sale
+              </Link>
+              <Link className="btn btn-outline" href={catHref('Table Runners')}>
+                Table Runners
+              </Link>
             </div>
           </div>
           <div className="hero2-side">
@@ -38,7 +47,10 @@ export default function HomePage() {
                 </div>
                 <div className="pick-body">
                   <b>{p.name}</b>
-                  <span>৳{fmt(p.price)}{p.was && <s>৳{fmt(p.was)}</s>}</span>
+                  <span>
+                    ৳{fmt(p.price)}
+                    {p.was && <s>৳{fmt(p.was)}</s>}
+                  </span>
                 </div>
               </Link>
             ))}
@@ -51,27 +63,44 @@ export default function HomePage() {
           {TRUST.map(([m, t, s]) => (
             <div className="trust-item" key={t}>
               <span className="trust-mark">{m}</span>
-              <div><b>{t}</b><small>{s}</small></div>
+              <div>
+                <b>{t}</b>
+                <small>{s}</small>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       <section className="container section" style={{ paddingBottom: 16 }}>
-        <h2 className="h2" style={{ marginBottom: 24 }}>Shop by Category</h2>
+        <h2 className="h2" style={{ marginBottom: 24 }}>
+          Shop by Category
+        </h2>
         <div className="grid-cats">
           {S.categories.map((c) => (
             <Link className="cat-tile" key={c} href={catHref(c)}>
-              <div className="cat-img" style={bg(px(S.categoryImages[c]))} />
-              <div className="cat-body"><b>{c}</b><small>{S.products.filter((p) => p.cat === c).length} products</small></div>
+              <div className="cat-img" style={bg(px(S.categoryImages[c] ?? 0))} />
+              <div className="cat-body">
+                <b>{c}</b>
+                <small>{S.products.filter((p) => p.cat === c).length} products</small>
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="container section" style={{ paddingTop: 48, paddingBottom: 64 }}>
-        <div className="section-head"><h2 className="h2">Best Sellers</h2><Link className="link-btn" href="/shop">View all →</Link></div>
-        <div className="grid-products">{S.bestsellers.map((id) => <ProductCard key={id} p={byId(id)} />)}</div>
+        <div className="section-head">
+          <h2 className="h2">Best Sellers</h2>
+          <Link className="link-btn" href="/shop">
+            View all →
+          </Link>
+        </div>
+        <div className="grid-products">
+          {byIds(S.bestsellers).map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
+        </div>
       </section>
 
       <section className="container" style={{ paddingBottom: 64 }}>
@@ -81,7 +110,9 @@ export default function HomePage() {
               <span className="promo-tag red">Up to 25% Off</span>
               <h3>Eid Festive Collection</h3>
               <p>Jamdani runners and kantha linens to welcome guests in style.</p>
-              <Link className="btn btn-white" href={catHref('Table Runners')}>Shop Festive</Link>
+              <Link className="btn btn-white" href={catHref('Table Runners')}>
+                Shop Festive
+              </Link>
             </div>
           </div>
           <div className="promo" style={bg(px(8479733, 1200))}>
@@ -89,19 +120,32 @@ export default function HomePage() {
               <span className="promo-tag">Buy 2, Get 1 Free</span>
               <h3>Cushion Cover Combo</h3>
               <p>Mix and match any three cushion covers — refresh your sofa for less.</p>
-              <Link className="btn btn-white" href={catHref('Cushion Covers')}>Shop Cushions</Link>
+              <Link className="btn btn-white" href={catHref('Cushion Covers')}>
+                Shop Cushions
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       <section className="container" style={{ paddingBottom: 64 }}>
-        <div className="section-head"><h2 className="h2">New Arrivals</h2><Link className="link-btn" href="/shop">View all →</Link></div>
-        <div className="grid-products">{S.newArrivals.map((id) => <ProductCard key={id} p={byId(id)} forceNew />)}</div>
+        <div className="section-head">
+          <h2 className="h2">New Arrivals</h2>
+          <Link className="link-btn" href="/shop">
+            View all →
+          </Link>
+        </div>
+        <div className="grid-products">
+          {byIds(S.newArrivals).map((p) => (
+            <ProductCard key={p.id} p={p} forceNew />
+          ))}
+        </div>
       </section>
 
       <section className="container" style={{ paddingBottom: 64 }}>
-        <h2 className="h2" style={{ marginBottom: 24 }}>Shop by Budget</h2>
+        <h2 className="h2" style={{ marginBottom: 24 }}>
+          Shop by Budget
+        </h2>
         <div className="grid-budget">
           {[1000, 2000, 3000, 5000].map((a) => (
             <Link className="budget" key={a} href={`/shop?max=${a}&sort=low`}>
@@ -120,13 +164,19 @@ export default function HomePage() {
           <div className="story-copy">
             <div className="eyebrow">Our Artisans</div>
             <h2>Supporting 120+ rural craftswomen across Bangladesh</h2>
-            <p>Every runner and cushion cover is hand-finished by artisan groups we work with directly — fair wages, natural fibres, and quality checked in Dhaka before dispatch.</p>
+            <p>
+              Every runner and cushion cover is hand-finished by artisan groups we work with directly — fair wages,
+              natural fibres, and quality checked in Dhaka before dispatch.
+            </p>
           </div>
         </div>
       </section>
 
       <section className="container" style={{ paddingTop: 64 }}>
-        <div className="section-head"><h2 className="h2">What Our Customers Say</h2><span className="muted">★ 4.8 average from 2,300+ reviews</span></div>
+        <div className="section-head">
+          <h2 className="h2">What Our Customers Say</h2>
+          <span className="muted">★ 4.8 average from 2,300+ reviews</span>
+        </div>
         <div className="grid-reviews">
           {S.reviews.map((r) => (
             <div className="review" key={r.name}>
@@ -134,7 +184,12 @@ export default function HomePage() {
               <p>“{r.text}”</p>
               <div className="review-by">
                 <span className="avatar">{r.name[0]}</span>
-                <div><b>{r.name}</b><small>{r.city} · Verified buyer · {r.item}</small></div>
+                <div>
+                  <b>{r.name}</b>
+                  <small>
+                    {r.city} · Verified buyer · {r.item}
+                  </small>
+                </div>
               </div>
             </div>
           ))}

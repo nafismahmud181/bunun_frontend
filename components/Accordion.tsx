@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function Accordion({ items, defaultOpen = 0 }) {
+export default function Accordion({ items, defaultOpen = 0 }: { items: [string, string][]; defaultOpen?: number }) {
   const [openIdx, setOpenIdx] = useState(defaultOpen);
   return (
     <div className="accordion">

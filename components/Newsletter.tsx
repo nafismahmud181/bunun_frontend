@@ -13,9 +13,16 @@ export default function Newsletter() {
       {done ? (
         <div className="success">Thank you! Your code WELCOME10 is on its way.</div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); setDone(true); /* TODO: send to your email/SMS provider */ }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setDone(true); /* TODO: send to your email/SMS provider */
+          }}
+        >
           <input className="input" required placeholder="Email or mobile number" />
-          <button className="btn btn-primary" type="submit">Subscribe</button>
+          <button className="btn btn-primary" type="submit">
+            Subscribe
+          </button>
         </form>
       )}
     </div>

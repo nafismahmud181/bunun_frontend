@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { bg, fmt, imgOf } from '@/lib/utils';
+import type { Product } from '@/lib/types';
 import { useCart } from './CartProvider';
 
-export default function ProductCard({ p, forceNew = false }) {
+export default function ProductCard({ p, forceNew = false }: { p: Product; forceNew?: boolean }) {
   const { add, showToast } = useCart();
   const tag = forceNew ? 'New' : p.tag;
   const href = `/product/${p.id}`;
@@ -15,12 +16,22 @@ export default function ProductCard({ p, forceNew = false }) {
       </Link>
       <div className="card-body">
         <span className="card-cat">{p.cat}</span>
-        <Link className="card-name" href={href}>{p.name}</Link>
+        <Link className="card-name" href={href}>
+          {p.name}
+        </Link>
         <div className="price-row">
           <span className="price">৳{fmt(p.price)}</span>
           {p.was && <span className="was">৳{fmt(p.was)}</span>}
         </div>
-        <button className="add-btn" onClick={() => { add(p.id, 0, 1); showToast(p.name + ' added to cart'); }}>Add to Cart</button>
+        <button
+          className="add-btn"
+          onClick={() => {
+            add(p.id, 0, 1);
+            showToast(p.name + ' added to cart');
+          }}
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   );

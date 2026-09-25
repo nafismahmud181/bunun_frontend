@@ -14,7 +14,11 @@ export default function Footer() {
         </div>
         <div>
           <h4>Shop</h4>
-          {S.categories.map((c) => <Link key={c} href={catHref(c)}>{c}</Link>)}
+          {S.categories.map((c) => (
+            <Link key={c} href={catHref(c)}>
+              {c}
+            </Link>
+          ))}
         </div>
         <div>
           <h4>Customer Care</h4>
@@ -26,7 +30,9 @@ export default function Footer() {
         <div>
           <h4>We Accept</h4>
           <div className="pay-badges">
-            {['bKash', 'Nagad', 'Visa', 'Mastercard', 'COD'].map((b) => <span key={b}>{b}</span>)}
+            {['bKash', 'Nagad', 'Visa', 'Mastercard', 'COD'].map((b) => (
+              <span key={b}>{b}</span>
+            ))}
           </div>
         </div>
       </div>
