@@ -2522,3 +2522,24 @@ textarea.input {
 .legal a {
   text-decoration: underline;
 }
+
+/* Option details on the product page (set per category in the admin), e.g. Dimensions: 16 × 72 in */
+.opt-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+.opt-details div {
+  display: flex;
+  gap: 6px;
+}
+.opt-details dt {
+  color: var(--muted-2);
+}
+.opt-details dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
+}

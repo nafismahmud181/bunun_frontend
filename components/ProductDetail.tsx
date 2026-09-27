@@ -46,7 +46,10 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
     .map((url) => imgSrc(url, 1200));
   const addToCart = async () => !!variant && (await add(variant.sku, qty));
   const details: [string, string][] = [
-    ['Product Details', p.description + ' Colour may vary slightly due to the handmade nature of the product.'],
+    [
+      'Product Details',
+      `${p.description ? p.description + ' ' : ''}Colour may vary slightly due to the handmade nature of the product.`,
+    ],
     [
       'Care Instructions',
       'Hand wash or gentle machine wash in cold water. Dry in shade. Warm iron on the reverse side.',
@@ -114,7 +117,7 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
           <p className="pdp-desc">{p.description}</p>
           <div>
             <div className="opt-label">
-              Size: <span>{variant?.label}</span>
+              {p.optionLabel}: <span>{variant?.label}</span>
             </div>
             <div className="sizes">
               {p.variants.map((v, i) => (
@@ -123,6 +126,16 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
                 </button>
               ))}
             </div>
+            {variant?.details && variant.details.length > 0 && (
+              <dl className="opt-details">
+                {variant.details.map((d) => (
+                  <div key={d.label}>
+                    <dt>{d.label}</dt>
+                    <dd>{d.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
           </div>
           <div className="buy-row">
             <div className="qty">
