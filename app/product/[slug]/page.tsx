@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { connection } from 'next/server';
-import { getCategories, getProduct, listProducts } from '@/lib/catalogue';
+import { getCategories, getProduct, getProductReviews, listProducts } from '@/lib/catalogue';
 import { productHref } from '@/lib/utils';
 import ProductDetail from '@/components/ProductDetail';
 
@@ -23,13 +23,19 @@ export default async function ProductPage({ params }: Props) {
     if (legacy) permanentRedirect(productHref(legacy.slug));
     notFound();
   }
-  const [all, categories] = await Promise.all([listProducts({ limit: 100 }), getCategories()]);
+  const [all, categories, reviews] = await Promise.all([
+    listProducts({ limit: 100 }),
+    getCategories(),
+    // Reviews are a nice-to-have on this page: if they fail to load, the product still shows.
+    getProductReviews(p.slug).catch(() => null),
+  ]);
   return (
     <ProductDetail
       key={p.slug}
       p={p}
       others={all.items.filter((x) => x.slug !== p.slug)}
       categoryImage={categories.find((c) => c.slug === p.category.slug)?.imageUrl ?? null}
+      reviews={reviews}
     />
   );
 }

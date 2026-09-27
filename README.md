@@ -47,8 +47,10 @@ app/
   product/[slug]/page.tsx   Product page; old /product/r1 links redirect to the slug
   checkout/page.tsx         Loads the address list, renders CheckoutForm
   order-success/page.tsx    Confirmation with a link to track the order
-  track/page.tsx            Track an order by order number + phone
-  about, privacy, terms, refund-policy/   Legal pages (text in lib/legal.ts)
+  track/page.tsx            Track an order by order number + phone (delivered orders link to the review page)
+  review/page.tsx           Review a delivered order: order number + phone, then stars, text and up to 3 photos
+  wishlist/page.tsx         Products saved in this browser
+  about, privacy, terms, refund-policy/   Store pages; the text is written in the admin (Content → Store pages)
   api/revalidate/route.ts   Cache refresh endpoint for the admin panel
   error.tsx                 Shown when a page can't load (e.g. the API is down)
   globals.css               All styles (colour variables at the top)
@@ -56,22 +58,22 @@ components/                 Header, Footer, CartProvider, CartDrawer, CheckoutFo
 lib/api/                    Typed API client (openapi-fetch) and generated schema
 lib/catalogue.ts            Cached reads for Server Components (catalogue, settings, locations)
 lib/cart.ts                 Reads carts saved by older versions, to move them to the server cart
-lib/legal.ts                Legal page text: fill in before applying to payment gateways
-lib/store.ts                Content not yet in the database: sale end date, reviews
+lib/markdown.tsx            Renders the Markdown subset used for store pages (same as the admin preview)
+lib/wishlist.ts             Wishlist in localStorage (key `bunon-wishlist`), shared across tabs
 lib/types.ts                API, cart and order types
-lib/utils.ts                Price formatting (৳), image helpers, FAQ text
+lib/utils.ts                Price formatting (৳), image helpers
 ```
 
 ## Customising
 
 - **Products, categories, delivery fees, free-delivery threshold, hotline**: in the database (`settings` and `delivery_zones` tables; admin panel from Phase 3).
-- **Legal pages**: write the text in `lib/legal.ts`.
+- **Homepage and store pages**: the sale banner and countdown, promo tiles, section order, best sellers, new arrivals, FAQ and the about/privacy/terms/refund pages are edited in the admin panel (Content).
 - **Colours**: edit the `:root` variables in `app/globals.css`.
-- **Sale countdown and homepage reviews**: `saleEnds` and `reviews` in `lib/store.ts`.
+- **Reviews and coupons**: managed in the admin panel. The homepage shows recent approved reviews; product pages show all of them.
 
 ## Cart and checkout
 
 - The cart lives on the server. The browser keeps only its token (`localStorage` key `bunon_cart_token`). A cart saved by an older version is moved to the server on the next visit.
-- Checkout offers Cash on Delivery only (online payments arrive in Phase 4). The delivery fee comes from the server for the chosen area. Each order attempt sends an `Idempotency-Key`, so a double click or a retry can't create two orders.
+- Checkout offers Cash on Delivery only (online payments arrive in Phase 4). The delivery fee comes from the server for the chosen area. Each order attempt sends an `Idempotency-Key`, so a double click or a retry can't create two orders. A coupon can be applied before or after choosing the area; the server works out the discount.
 - The browser calls the cart, checkout and tracking APIs directly, so rate limits and fraud checks see each shopper's own IP. The API's `CORS_ORIGINS` must include the storefront's address.
-- Account, Wishlist and the বাংলা link are placeholders.
+- There are no customer accounts: the header links to order tracking and the wishlist. The বাংলা link is a placeholder.

@@ -4,10 +4,13 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { bg, catHref, fmt, imgSrc } from '@/lib/utils';
-import type { ProductDetail as Product, ProductSummary, Variant } from '@/lib/types';
+import type { ProductDetail as Product, ProductReviews, ProductSummary, Variant } from '@/lib/types';
 import { useCart } from './CartProvider';
 import Accordion from './Accordion';
 import ProductCard from './ProductCard';
+import ProductReviewsSection from './ProductReviewsSection';
+import Stars from './Stars';
+import WishlistButton from './WishlistButton';
 
 const stockText = (v: Variant | undefined) =>
   !v || v.stockStatus === 'out' ? 'Out of stock' : v.stockStatus === 'low' ? `Only ${v.stockLeft} left` : 'In stock';
@@ -17,9 +20,11 @@ interface Props {
   /** Every other product, used for "You May Also Like" and to fill out the gallery. */
   others: ProductSummary[];
   categoryImage: string | null;
+  /** First page of approved reviews; null if they couldn't be loaded (the section is then left out). */
+  reviews: ProductReviews | null;
 }
 
-export default function ProductDetail({ p, others, categoryImage }: Props) {
+export default function ProductDetail({ p, others, categoryImage, reviews }: Props) {
   const router = useRouter();
   const { add, setOpen, settings } = useCart();
   const [img, setImg] = useState(0);
@@ -91,7 +96,15 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
             </span>
             <h1>{p.name}</h1>
             <div className="pdp-meta">
-              ★ 4.8 ({40 + p.name.length * 3} reviews) · SKU {variant?.sku} · <b>{stockText(variant)}</b>
+              {p.rating ? (
+                <a href="#reviews" className="pdp-rating">
+                  <Stars rating={p.rating.average} /> {p.rating.average.toFixed(1)} ({p.rating.count} review
+                  {p.rating.count === 1 ? '' : 's'})
+                </a>
+              ) : (
+                'No reviews yet'
+              )}{' '}
+              · SKU {variant?.sku} · <b>{stockText(variant)}</b>
             </div>
             <div className="price-row" style={{ gap: 10 }}>
               <span className="pdp-price">৳{fmt(unit)}</span>
@@ -139,6 +152,7 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
             >
               Buy Now · ৳{fmt(unit * qty)}
             </button>
+            <WishlistButton slug={p.slug} name={p.name} variant="pdp" />
           </div>
           <div className="ship-info">
             {settings.zones.map((z) => (
@@ -153,6 +167,7 @@ export default function ProductDetail({ p, others, categoryImage }: Props) {
           <Accordion items={details} />
         </div>
       </div>
+      {reviews && <ProductReviewsSection slug={p.slug} initial={reviews} />}
       <div className="related">
         <h2 className="h2">You May Also Like</h2>
         <div className="grid-products">

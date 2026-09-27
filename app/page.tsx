@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { getCategories, getStoreSettings, listProducts } from '@/lib/catalogue';
-import { STORE as S } from '@/lib/store';
-import { bg, catHref, faqs, fmt, imgSrc, productHref, px } from '@/lib/utils';
+import type { ReactNode } from 'react';
+import { getCategories, getContent, getFeaturedReviews, listProducts } from '@/lib/catalogue';
+import { bg, catHref, fmt, imgSrc, productHref, px } from '@/lib/utils';
 import ProductCard from '@/components/ProductCard';
 import Countdown from '@/components/Countdown';
 import Accordion from '@/components/Accordion';
 import Newsletter from '@/components/Newsletter';
+import Stars from '@/components/Stars';
+import type { FeaturedReviews, StoreContent } from '@/lib/types';
 
 const TRUST: [string, string, string][] = [
   ['COD', 'Cash on Delivery', 'Pay at your doorstep'],
@@ -14,13 +16,20 @@ const TRUST: [string, string, string][] = [
   ['7d', 'Easy Exchange', 'Within 7 days'],
 ];
 
+/** "Up to *25% off* runners" → "Up to <em>25% off</em> runners" (staff highlight words with stars). */
+function highlighted(title: string): ReactNode[] {
+  return title.split(/\*([^*]+)\*/).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : part));
+}
+
 export default async function HomePage() {
-  const [categories, all, bestsellers, newArrivals, settings] = await Promise.all([
+  const [content, categories, all, bestsellers, newArrivals, reviews] = await Promise.all([
+    getContent(),
     getCategories(),
     listProducts({ limit: 100 }),
     listProducts({ section: 'bestsellers' }),
     listProducts({ section: 'new-arrivals' }),
-    getStoreSettings(),
+    // The reviews strip is left out if it can't load, rather than failing the whole homepage.
+    getFeaturedReviews().catch((): FeaturedReviews | null => null),
   ]);
   const products = all.items;
   // Discounted products first, then other tagged ones.
@@ -28,25 +37,28 @@ export default async function HomePage() {
     .filter((p) => p.compareAtPrice)
     .concat(products.filter((p) => !p.compareAtPrice && p.tag))
     .slice(0, 4);
+  const { hero, promos, faq } = content;
+  const countdown = hero.countdownEnds && new Date(hero.countdownEnds) > new Date() ? hero.countdownEnds : null;
 
-  return (
-    <>
-      <section className="hero2">
+  // Each homepage section; staff choose the order and which ones show (admin → Content).
+  const sections: Record<StoreContent['sections'][number]['key'], () => ReactNode> = {
+    hero: () => (
+      <section className="hero2" key="hero">
         <div className="container hero2-grid">
           <div className="hero2-main">
-            <div className="eyebrow">Festive Sale · Limited Time</div>
-            <h1>
-              Up to <em>25% off</em> handcrafted runners, kantha &amp; jute
-            </h1>
-            <p>Dress your home for the season with pieces made by artisans in Jashore, Tangail and Rangpur.</p>
-            <Countdown end={S.saleEnds} />
+            {hero.eyebrow && <div className="eyebrow">{hero.eyebrow}</div>}
+            <h1>{highlighted(hero.title)}</h1>
+            {hero.text && <p>{hero.text}</p>}
+            {countdown && <Countdown end={countdown} />}
             <div className="hero2-actions">
-              <Link className="btn btn-primary" href="/shop">
-                Shop the Sale
+              <Link className="btn btn-primary" href={hero.primary.href}>
+                {hero.primary.label}
               </Link>
-              <Link className="btn btn-outline" href={catHref('table-runners')}>
-                Table Runners
-              </Link>
+              {hero.secondary && (
+                <Link className="btn btn-outline" href={hero.secondary.href}>
+                  {hero.secondary.label}
+                </Link>
+              )}
             </div>
           </div>
           <div className="hero2-side">
@@ -69,8 +81,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      <section className="trust">
+    ),
+    trust: () => (
+      <section className="trust home-band" key="trust">
         <div className="container">
           {TRUST.map(([m, t, s]) => (
             <div className="trust-item" key={t}>
@@ -83,8 +96,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      <section className="container section" style={{ paddingBottom: 16 }}>
+    ),
+    categories: () => (
+      <section className="container home-block" key="categories">
         <h2 className="h2" style={{ marginBottom: 24 }}>
           Shop by Category
         </h2>
@@ -100,61 +114,60 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      <section className="container section" style={{ paddingTop: 48, paddingBottom: 64 }}>
-        <div className="section-head">
-          <h2 className="h2">Best Sellers</h2>
-          <Link className="link-btn" href="/shop">
-            View all →
-          </Link>
-        </div>
-        <div className="grid-products">
-          {bestsellers.items.map((p) => (
-            <ProductCard key={p.slug} p={p} />
-          ))}
-        </div>
-      </section>
-
-      <section className="container" style={{ paddingBottom: 64 }}>
-        <div className="promos">
-          <div className="promo" style={bg(px(17240972, 1200))}>
-            <div className="promo-body">
-              <span className="promo-tag red">Up to 25% Off</span>
-              <h3>Eid Festive Collection</h3>
-              <p>Jamdani runners and kantha linens to welcome guests in style.</p>
-              <Link className="btn btn-white" href={catHref('table-runners')}>
-                Shop Festive
-              </Link>
-            </div>
+    ),
+    bestsellers: () =>
+      bestsellers.items.length > 0 && (
+        <section className="container home-block" key="bestsellers">
+          <div className="section-head">
+            <h2 className="h2">Best Sellers</h2>
+            <Link className="link-btn" href="/shop">
+              View all →
+            </Link>
           </div>
-          <div className="promo" style={bg(px(8479733, 1200))}>
-            <div className="promo-body">
-              <span className="promo-tag">Buy 2, Get 1 Free</span>
-              <h3>Cushion Cover Combo</h3>
-              <p>Mix and match any three cushion covers — refresh your sofa for less.</p>
-              <Link className="btn btn-white" href={catHref('cushion-covers')}>
-                Shop Cushions
-              </Link>
-            </div>
+          <div className="grid-products">
+            {bestsellers.items.map((p) => (
+              <ProductCard key={p.slug} p={p} />
+            ))}
           </div>
-        </div>
-      </section>
-
-      <section className="container" style={{ paddingBottom: 64 }}>
-        <div className="section-head">
-          <h2 className="h2">New Arrivals</h2>
-          <Link className="link-btn" href="/shop">
-            View all →
-          </Link>
-        </div>
-        <div className="grid-products">
-          {newArrivals.items.map((p) => (
-            <ProductCard key={p.slug} p={p} forceNew />
-          ))}
-        </div>
-      </section>
-
-      <section className="container" style={{ paddingBottom: 64 }}>
+        </section>
+      ),
+    promos: () =>
+      promos.length > 0 && (
+        <section className="container home-block" key="promos">
+          <div className="promos">
+            {promos.map((t, i) => (
+              <div className="promo" key={i} style={bg(imgSrc(t.imageUrl, 1200))}>
+                <div className="promo-body">
+                  {t.tag && <span className={`promo-tag ${t.tagStyle === 'red' ? 'red' : ''}`}>{t.tag}</span>}
+                  <h3>{t.title}</h3>
+                  {t.text && <p>{t.text}</p>}
+                  <Link className="btn btn-white" href={t.href}>
+                    {t.buttonLabel}
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ),
+    'new-arrivals': () =>
+      newArrivals.items.length > 0 && (
+        <section className="container home-block" key="new-arrivals">
+          <div className="section-head">
+            <h2 className="h2">New Arrivals</h2>
+            <Link className="link-btn" href="/shop">
+              View all →
+            </Link>
+          </div>
+          <div className="grid-products">
+            {newArrivals.items.map((p) => (
+              <ProductCard key={p.slug} p={p} forceNew />
+            ))}
+          </div>
+        </section>
+      ),
+    budget: () => (
+      <section className="container home-block" key="budget">
         <h2 className="h2" style={{ marginBottom: 24 }}>
           Shop by Budget
         </h2>
@@ -168,8 +181,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      <section className="story">
+    ),
+    story: () => (
+      <section className="story home-band" key="story">
         <div className="container">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={px(6634704, 1200)} alt="Artisan weaving on a wooden loom" />
@@ -183,39 +197,53 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      <section className="container" style={{ paddingTop: 64 }}>
-        <div className="section-head">
-          <h2 className="h2">What Our Customers Say</h2>
-          <span className="muted">★ 4.8 average from 2,300+ reviews</span>
-        </div>
-        <div className="grid-reviews">
-          {S.reviews.map((r) => (
-            <div className="review" key={r.name}>
-              <span className="stars">★★★★★</span>
-              <p>“{r.text}”</p>
-              <div className="review-by">
-                <span className="avatar">{r.name[0]}</span>
-                <div>
-                  <b>{r.name}</b>
-                  <small>
-                    {r.city} · Verified buyer · {r.item}
-                  </small>
+    ),
+    reviews: () =>
+      reviews &&
+      reviews.items.length > 0 && (
+        <section className="container home-block" key="reviews">
+          <div className="section-head">
+            <h2 className="h2">What Our Customers Say</h2>
+            {reviews.average !== null && (
+              <span className="muted">
+                ★ {reviews.average.toFixed(1)} average from {reviews.count.toLocaleString('en-US')} review
+                {reviews.count === 1 ? '' : 's'}
+              </span>
+            )}
+          </div>
+          <div className="grid-reviews">
+            {reviews.items.slice(0, 3).map((r) => (
+              <div className="review" key={r.id}>
+                <Stars rating={r.rating} size={16} />
+                <p>“{r.body.length > 220 ? r.body.slice(0, 217).trimEnd() + '…' : r.body}”</p>
+                <div className="review-by">
+                  <span className="avatar">{r.name[0]}</span>
+                  <div>
+                    <b>{r.name}</b>
+                    <small>
+                      {r.city ? `${r.city} · ` : ''}Verified buyer ·{' '}
+                      <Link href={productHref(r.product.slug)}>{r.product.name}</Link>
+                    </small>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="faq-wrap" id="faq">
-        <h2 className="h2">Frequently Asked Questions</h2>
-        <Accordion items={faqs(settings)} />
-      </section>
-
-      <section className="container section">
+            ))}
+          </div>
+        </section>
+      ),
+    faq: () =>
+      faq.length > 0 && (
+        <section className="faq-wrap" id="faq" key="faq">
+          <h2 className="h2">Frequently Asked Questions</h2>
+          <Accordion items={faq.map((f): [string, string] => [f.q, f.a])} />
+        </section>
+      ),
+    newsletter: () => (
+      <section className="container home-block" key="newsletter">
         <Newsletter />
       </section>
-    </>
-  );
+    ),
+  };
+
+  return <div className="home">{content.sections.filter((s) => s.visible).map((s) => sections[s.key]())}</div>;
 }

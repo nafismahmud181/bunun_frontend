@@ -49,3 +49,34 @@ export const getProduct = cache(async (slug: string) => {
   if (response.status === 404) return null;
   return data ?? fail('product', response.status);
 });
+
+/** A product's approved reviews (first page) and star breakdown; null if the product isn't for sale. */
+export async function getProductReviews(slug: string) {
+  const { data, response } = await api.GET('/api/v1/products/{slug}/reviews', {
+    params: { path: { slug }, query: { limit: 6 } },
+    fetch: cached,
+  });
+  if (response.status === 404) return null;
+  return data ?? fail('reviews', response.status);
+}
+
+/** Recent good reviews for the homepage, with the store-wide average. */
+export async function getFeaturedReviews() {
+  const { data, response } = await api.GET('/api/v1/reviews/featured', {
+    params: { query: { limit: 6 } },
+    fetch: cached,
+  });
+  return data ?? fail('featured reviews', response.status);
+}
+
+/** Homepage content edited in the admin: sale banner, promo tiles, section order, FAQ. */
+export async function getContent() {
+  const { data, response } = await api.GET('/api/v1/content', { fetch: cached });
+  return data ?? fail('content', response.status);
+}
+
+/** A legal or information page (about, privacy, terms, refund-policy). */
+export async function getPage(slug: 'about' | 'privacy' | 'terms' | 'refund-policy') {
+  const { data, response } = await api.GET('/api/v1/pages/{slug}', { params: { path: { slug } }, fetch: cached });
+  return data ?? fail(`page ${slug}`, response.status);
+}

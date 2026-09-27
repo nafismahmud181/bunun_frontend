@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { bg, fmt, imgSrc, productHref } from '@/lib/utils';
 import type { ProductSummary } from '@/lib/types';
 import { useCart } from './CartProvider';
+import Stars from './Stars';
+import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ p, forceNew = false }: { p: ProductSummary; forceNew?: boolean }) {
   const { add, showToast } = useCart();
@@ -13,14 +15,22 @@ export default function ProductCard({ p, forceNew = false }: { p: ProductSummary
   const image = p.image ? imgSrc(p.image.url) : null;
   return (
     <div className="card">
-      <Link className="card-img" href={href} style={image ? bg(image) : undefined} aria-label={p.name}>
-        {tag && <span className={`badge ${tag === 'Sale' ? 'sale' : ''}`}>{tag}</span>}
-      </Link>
+      <div className="card-media">
+        <Link className="card-img" href={href} style={image ? bg(image) : undefined} aria-label={p.name}>
+          {tag && <span className={`badge ${tag === 'Sale' ? 'sale' : ''}`}>{tag}</span>}
+        </Link>
+        <WishlistButton slug={p.slug} name={p.name} />
+      </div>
       <div className="card-body">
         <span className="card-cat">{p.category.name}</span>
         <Link className="card-name" href={href}>
           {p.name}
         </Link>
+        {p.rating && (
+          <span className="card-rating">
+            <Stars rating={p.rating.average} size={13} /> <small>({p.rating.count})</small>
+          </span>
+        )}
         <div className="price-row">
           <span className="price">৳{fmt(p.price)}</span>
           {p.compareAtPrice && <span className="was">৳{fmt(p.compareAtPrice)}</span>}

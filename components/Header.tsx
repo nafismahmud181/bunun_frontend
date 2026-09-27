@@ -5,6 +5,7 @@ import { Suspense, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { catHref, fmt } from '@/lib/utils';
 import type { Category } from '@/lib/types';
+import { useWishlist } from '@/lib/wishlist';
 import { useCart } from './CartProvider';
 
 const Icon = {
@@ -14,10 +15,11 @@ const Icon = {
       <path d="m20 20-3.5-3.5" />
     </svg>
   ),
-  user: (
+  truck: (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+      <path d="M3 6h11v10H3zM14 10h4l3 3v3h-7" />
+      <circle cx="7" cy="18" r="1.8" />
+      <circle cx="17" cy="18" r="1.8" />
     </svg>
   ),
   heart: (
@@ -108,6 +110,7 @@ function NavWithParams({ categories }: { categories: Category[] }) {
 
 export default function Header({ categories }: { categories: Category[] }) {
   const { count, subtotal, setOpen, settings } = useCart();
+  const wishlist = useWishlist();
   return (
     <>
       <div className="topbar">
@@ -136,15 +139,18 @@ export default function Header({ categories }: { categories: Category[] }) {
               <SearchWithParams />
             </Suspense>
             <div className="header-actions">
-              <Link className="h-action" href="/">
-                <span className="h-icon">{Icon.user}</span>
+              <Link className="h-action" href="/track">
+                <span className="h-icon">{Icon.truck}</span>
                 <span className="h-label">
-                  <small>Hello, Sign in</small>
-                  <b>Account</b>
+                  <small>Your order</small>
+                  <b>Track</b>
                 </span>
               </Link>
-              <Link className="h-action" href="/">
-                <span className="h-icon">{Icon.heart}</span>
+              <Link className="h-action" href="/wishlist">
+                <span className="h-icon">
+                  {Icon.heart}
+                  {wishlist.slugs.length > 0 && <span className="cart-count">{wishlist.slugs.length}</span>}
+                </span>
                 <span className="h-label">
                   <small>Saved</small>
                   <b>Wishlist</b>

@@ -16,19 +16,12 @@ export type OrderReceipt = Schemas['OrderReceipt'];
 export type TrackedOrder = Schemas['TrackedOrder'];
 export type OrderStatus = Schemas['OrderStatus'];
 export type ApiErrorBody = Schemas['Error'];
-
-export interface Review {
-  name: string;
-  city: string;
-  item: string;
-  text: string;
-}
-
-/** Content that isn't in the database yet (the sale banner and reviews come with the CMS in Phase 5). */
-export interface Store {
-  saleEnds: string;
-  reviews: Review[];
-}
+export type PublicReview = Schemas['PublicReview'];
+export type ProductReviews = Schemas['ProductReviews'];
+export type FeaturedReviews = Schemas['FeaturedReviews'];
+export type ReviewableOrder = Schemas['ReviewableOrder'];
+export type StoreContent = Schemas['StoreContent'];
+export type StorePage = Schemas['StorePage'];
 
 /** The order just placed, kept for the confirmation page. */
 export interface LastOrder {

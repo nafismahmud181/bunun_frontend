@@ -1,7 +1,12 @@
 import Link from 'next/link';
-import type { LegalPage as Page } from '@/lib/legal';
+import { renderMarkdown } from '@/lib/markdown';
+import type { StorePage } from '@/lib/types';
 
-export default function LegalPage({ page }: { page: Page }) {
+const updated = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-GB', { timeZone: 'Asia/Dhaka', day: 'numeric', month: 'long', year: 'numeric' });
+
+/** A legal or information page; the text is written in the admin panel (Content → Store pages). */
+export default function LegalPage({ page }: { page: StorePage }) {
   return (
     <section className="container legal">
       <div className="crumbs">
@@ -10,15 +15,8 @@ export default function LegalPage({ page }: { page: Page }) {
         <span>{page.title}</span>
       </div>
       <h1 className="page-title">{page.title}</h1>
-      {page.updated && <p className="muted">{page.updated}</p>}
-      {page.sections.map((s) => (
-        <section key={s.heading}>
-          <h2>{s.heading}</h2>
-          {s.body.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </section>
-      ))}
+      {page.updatedAt && <p className="muted">Last updated {updated(page.updatedAt)}</p>}
+      {renderMarkdown(page.body)}
     </section>
   );
 }

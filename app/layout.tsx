@@ -33,7 +33,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   ]);
   return (
     <html lang="en">
-      <body>
+      {/* Browser extensions (e.g. ColorZilla) add attributes to <body> before React loads. */}
+      <body suppressHydrationWarning>
         <CartProvider settings={settings}>
           <Header categories={categories} />
           <main>{children}</main>

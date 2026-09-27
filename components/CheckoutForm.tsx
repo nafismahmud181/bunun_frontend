@@ -34,6 +34,10 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
     notes: '',
   });
   const [quote, setQuote] = useState<Quote | null>(null);
+  const [couponInput, setCouponInput] = useState('');
+  // The code the shopper applied; the quote says whether it is valid and what it takes off.
+  const [coupon, setCoupon] = useState('');
+  const [quoteVersion, setQuoteVersion] = useState(0);
   const [error, setError] = useState('');
   const [placing, setPlacing] = useState(false);
   // One key per order attempt: a retry after a network error reuses it, so the order can't be placed twice.
@@ -45,13 +49,21 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
     [division, form.districtId],
   );
 
-  // The delivery fee always comes from the server, for the chosen area and the current cart.
+  // Delivery fee, coupon discount and total always come from the server, for the chosen area,
+  // coupon and current cart. With a valid phone number the coupon's per-phone rules are checked too.
+  const phoneForQuote = isPhone(form.phone) ? normalisePhone(form.phone) : '';
   useEffect(() => {
-    if (!form.areaId || !token) return;
+    if (!token || (!form.areaId && !coupon)) return;
     let stale = false;
     api
       .GET('/api/v1/cart/quote', {
-        params: { query: { areaId: Number(form.areaId) } },
+        params: {
+          query: {
+            ...(form.areaId && { areaId: Number(form.areaId) }),
+            ...(coupon && { coupon }),
+            ...(coupon && phoneForQuote && { phone: phoneForQuote }),
+          },
+        },
         headers: { 'x-cart-token': token },
       })
       .then(({ data }) => !stale && setQuote(data ?? null))
@@ -59,7 +71,21 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
     return () => {
       stale = true;
     };
-  }, [form.areaId, token, subtotal]);
+  }, [form.areaId, token, subtotal, coupon, phoneForQuote, quoteVersion]);
+
+  const applyCoupon = () => {
+    const code = couponInput.trim().toUpperCase();
+    if (!/^[A-Z0-9_-]{1,30}$/.test(code)) return setError('Enter the coupon code as written, e.g. EID20.');
+    setError('');
+    setCoupon(code);
+  };
+  const removeCoupon = () => {
+    setCoupon('');
+    setCouponInput('');
+    if (!form.areaId) setQuote(null);
+  };
+  const couponOk = !!coupon && quote?.coupon?.code === coupon;
+  const couponError = coupon ? quote?.couponError : undefined;
 
   const set = (k: keyof Form) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const v = e.target.value;
@@ -80,6 +106,8 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
       return setError('Some items have fewer in stock than in your cart. Please update your cart.');
     if (form.name.trim().length < 2 || !isPhone(form.phone) || !form.areaId || form.address.trim().length < 5)
       return setError('Please enter your name, a valid 11-digit mobile number, your area and full address.');
+    if (coupon && !couponOk)
+      return setError(`${couponError ?? 'Checking your coupon…'} Remove the coupon to order without it.`);
 
     setError('');
     setPlacing(true);
@@ -93,6 +121,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
           areaId: Number(form.areaId),
           address: form.address.trim(),
           ...(form.notes.trim() && { notes: form.notes.trim() }),
+          ...(couponOk && { coupon }),
           paymentMethod: 'cod',
         },
       });
@@ -104,6 +133,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
         return;
       }
       if (err && 'code' in err && (err.code === 'OUT_OF_STOCK' || err.code === 'UNAVAILABLE')) await reload();
+      if (err && 'code' in err && err.code === 'COUPON_INVALID') setQuoteVersion((v) => v + 1);
       setError(err && 'code' in err ? err.message : 'Please check your details and try again.');
     } catch {
       setError('Could not reach the store. Please check your connection and try again.');
@@ -112,7 +142,8 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
     }
   };
 
-  const deliveryFee = quote?.deliveryFee;
+  const deliveryFee = quote?.deliveryFee ?? undefined;
+  const total = quote ? quote.total : subtotal;
   return (
     <section className="checkout">
       <h1 className="page-title" style={{ marginBottom: 24 }}>
@@ -214,11 +245,58 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
               <b style={{ whiteSpace: 'nowrap' }}>৳{fmt(l.lineTotal)}</b>
             </div>
           ))}
+          <div className="coupon">
+            {couponOk ? (
+              <div className="coupon-applied">
+                <span>
+                  <b>{coupon}</b> · {quote?.coupon?.summary}
+                  {quote?.coupon?.description && <small>{quote.coupon.description}</small>}
+                </span>
+                <button type="button" className="link-btn" onClick={removeCoupon}>
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="coupon-row">
+                <input
+                  className="input"
+                  placeholder="Coupon code"
+                  aria-label="Coupon code"
+                  autoCapitalize="characters"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      applyCoupon();
+                    }
+                  }}
+                />
+                <button type="button" className="btn btn-outline" onClick={applyCoupon} disabled={!couponInput.trim()}>
+                  Apply
+                </button>
+              </div>
+            )}
+            {couponError && (
+              <div className="coupon-error" role="alert">
+                {couponError}{' '}
+                <button type="button" className="link-btn" onClick={removeCoupon}>
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
           <div className="sum-total">
             <div className="sum-line">
               <span>Subtotal</span>
               <span>৳{fmt(subtotal)}</span>
             </div>
+            {couponOk && quote && quote.discount > 0 && (
+              <div className="sum-line discount">
+                <span>Coupon {coupon}</span>
+                <span>−৳{fmt(quote.discount)}</span>
+              </div>
+            )}
             <div className="sum-line">
               <span>Delivery charge</span>
               <span>
@@ -231,7 +309,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
                     : '৳' + fmt(deliveryFee)}
               </span>
             </div>
-            {quote && (
+            {quote?.zone && (
               <div className="sum-line muted">
                 <span>{quote.zone.name}</span>
                 <span>{quote.zone.estimate}</span>
@@ -239,7 +317,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
             )}
             <div className="sum-line grand">
               <span>Total</span>
-              <span>৳{fmt(subtotal + (deliveryFee ?? 0))}</span>
+              <span>৳{fmt(total)}</span>
             </div>
           </div>
           <button className="btn btn-primary" type="submit" disabled={placing} style={{ height: 50, padding: 0 }}>

@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
+import { connection } from 'next/server';
 import LegalPage from '@/components/LegalPage';
-import { LEGAL } from '@/lib/legal';
+import { getPage } from '@/lib/catalogue';
 
-export const metadata: Metadata = { title: LEGAL.terms.title };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getPage('terms')).title };
+}
 
-export default function Page() {
-  return <LegalPage page={LEGAL.terms} />;
+export default async function Page() {
+  await connection();
+  return <LegalPage page={await getPage('terms')} />;
 }

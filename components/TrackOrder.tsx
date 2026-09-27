@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api/client';
@@ -139,6 +140,12 @@ export default function TrackOrder() {
             </div>
           ))}
           <div className="sum-total">
+            {order.discount > 0 && (
+              <div className="sum-line discount">
+                <span>{order.couponCode ? `Coupon ${order.couponCode}` : 'Discount'}</span>
+                <span>−৳{fmt(order.discount)}</span>
+              </div>
+            )}
             <div className="sum-line">
               <span>
                 Delivery to {order.area}, {order.district}
@@ -150,6 +157,12 @@ export default function TrackOrder() {
               <span>৳{fmt(order.total)}</span>
             </div>
           </div>
+          {order.status === 'delivered' && (
+            <p className="track-review">
+              How did we do?{' '}
+              <Link href={`/review?order=${encodeURIComponent(order.orderNo)}`}>Review what you bought →</Link>
+            </p>
+          )}
         </div>
       )}
     </section>
