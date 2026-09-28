@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { API_URL, api } from '@/lib/api/client';
 import type { ReviewableOrder } from '@/lib/types';
 import { bg, imgSrc, productHref } from '@/lib/utils';
+import ShortName from './ShortName';
 
 const MAX_PHOTOS = 3;
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -252,7 +253,9 @@ export default function ReviewFlow() {
                   <div className="review-thumb" style={i.image ? bg(imgSrc(i.image.url, 400)) : undefined} />
                   <div>
                     <Link href={productHref(i.slug)}>
-                      <b>{i.name}</b>
+                      <b>
+                        <ShortName name={i.name} />
+                      </b>
                     </Link>
                     <small>{i.label}</small>
                   </div>

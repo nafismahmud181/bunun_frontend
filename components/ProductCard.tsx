@@ -6,6 +6,7 @@ import type { ProductSummary } from '@/lib/types';
 import { useCart } from './CartProvider';
 import Stars from './Stars';
 import WishlistButton from './WishlistButton';
+import ShortName from './ShortName';
 
 export default function ProductCard({ p, forceNew = false }: { p: ProductSummary; forceNew?: boolean }) {
   const { add, showToast } = useCart();
@@ -24,7 +25,7 @@ export default function ProductCard({ p, forceNew = false }: { p: ProductSummary
       <div className="card-body">
         <span className="card-cat">{p.category.name}</span>
         <Link className="card-name" href={href}>
-          {p.name}
+          <ShortName name={p.name} />
         </Link>
         {p.rating && (
           <span className="card-rating">

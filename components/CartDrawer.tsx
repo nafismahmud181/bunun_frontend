@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { bg, fmt, imgSrc } from '@/lib/utils';
 import { useCart } from './CartProvider';
+import ShortName from './ShortName';
 
 export default function CartDrawer() {
   const { open, setOpen, lines, subtotal, count, changeQty, remove, showToast, settings } = useCart();
@@ -43,7 +44,9 @@ export default function CartDrawer() {
             <div className="line-item" key={l.sku}>
               <div className="line-img" style={l.image ? bg(imgSrc(l.image.url, 300)) : undefined} />
               <div>
-                <b>{l.name}</b>
+                <b>
+                  <ShortName name={l.name} />
+                </b>
                 <small>{l.label}</small>
                 {!l.available && (
                   <small className="line-warn">

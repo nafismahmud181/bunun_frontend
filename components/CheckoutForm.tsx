@@ -6,6 +6,7 @@ import { api } from '@/lib/api/client';
 import { fmt } from '@/lib/utils';
 import type { LocationTree, Quote } from '@/lib/types';
 import { useCart } from './CartProvider';
+import ShortName from './ShortName';
 
 // Same rule as the backend: 01XXXXXXXXX, optionally written with +88 / 88, spaces or dashes.
 const normalisePhone = (s: string) => s.replace(/[\s-]/g, '').replace(/^\+?88(?=01)/, '');
@@ -239,7 +240,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
           {lines.map((l) => (
             <div className="sum-line" key={l.sku}>
               <span>
-                {l.name} · {l.label} × {l.qty}
+                <ShortName name={l.name} /> · {l.label} × {l.qty}
                 {!l.available && <small className="line-warn"> (only {l.stockLeft ?? 0} left)</small>}
               </span>
               <b style={{ whiteSpace: 'nowrap' }}>৳{fmt(l.lineTotal)}</b>

@@ -28,3 +28,9 @@ export const imgSrc = (url: string, w = 800) => {
 export const catHref = (slug: string) => '/shop?cat=' + encodeURIComponent(slug);
 export const productHref = (slug: string) => `/product/${slug}`;
 export const bg = (url: string): CSSProperties => ({ backgroundImage: `url('${url}')` });
+
+/** Product names longer than this are shortened in lists (cards, cart, checkout). */
+export const NAME_MAX = 30;
+/** "Colorful Table Runner - Mid Century…" — the first 30 characters, then an ellipsis. */
+export const shortName = (name: string, max = NAME_MAX) =>
+  name.length > max ? name.slice(0, max).trimEnd() + '…' : name;

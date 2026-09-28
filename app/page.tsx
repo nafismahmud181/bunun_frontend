@@ -8,6 +8,7 @@ import Accordion from '@/components/Accordion';
 import Newsletter from '@/components/Newsletter';
 import Stars from '@/components/Stars';
 import type { FeaturedReviews, StoreContent } from '@/lib/types';
+import ShortName from '@/components/ShortName';
 
 const TRUST: [string, string, string][] = [
   ['COD', 'Cash on Delivery', 'Pay at your doorstep'],
@@ -32,10 +33,13 @@ export default async function HomePage() {
     getFeaturedReviews().catch((): FeaturedReviews | null => null),
   ]);
   const products = all.items;
-  // Discounted products first, then other tagged ones.
-  const picks = products
-    .filter((p) => p.compareAtPrice)
-    .concat(products.filter((p) => !p.compareAtPrice && p.tag))
+  // Discounted products first, then other tagged ones, then the newest to fill the four tiles.
+  const picks = [
+    ...products.filter((p) => p.compareAtPrice),
+    ...products.filter((p) => !p.compareAtPrice && p.tag),
+    ...newArrivals.items,
+  ]
+    .filter((p, i, all) => all.findIndex((x) => x.slug === p.slug) === i)
     .slice(0, 4);
   const { hero, promos, faq } = content;
   const countdown = hero.countdownEnds && new Date(hero.countdownEnds) > new Date() ? hero.countdownEnds : null;
@@ -70,7 +74,9 @@ export default async function HomePage() {
                   )}
                 </div>
                 <div className="pick-body">
-                  <b>{p.name}</b>
+                  <b>
+                    <ShortName name={p.name} />
+                  </b>
                   <span>
                     ৳{fmt(p.price)}
                     {p.compareAtPrice && <s>৳{fmt(p.compareAtPrice)}</s>}
@@ -222,7 +228,9 @@ export default async function HomePage() {
                     <b>{r.name}</b>
                     <small>
                       {r.city ? `${r.city} · ` : ''}Verified buyer ·{' '}
-                      <Link href={productHref(r.product.slug)}>{r.product.name}</Link>
+                      <Link href={productHref(r.product.slug)}>
+                        <ShortName name={r.product.name} />
+                      </Link>
                     </small>
                   </div>
                 </div>

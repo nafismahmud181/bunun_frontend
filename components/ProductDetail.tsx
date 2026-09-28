@@ -11,6 +11,7 @@ import ProductCard from './ProductCard';
 import ProductReviewsSection from './ProductReviewsSection';
 import Stars from './Stars';
 import WishlistButton from './WishlistButton';
+import ShortName from './ShortName';
 
 const stockText = (v: Variant | undefined) =>
   !v || v.stockStatus === 'out' ? 'Out of stock' : v.stockStatus === 'low' ? `Only ${v.stockLeft} left` : 'In stock';
@@ -70,7 +71,9 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
         <span>/</span>
         <Link href={catHref(p.category.slug)}>{p.category.name}</Link>
         <span>/</span>
-        <span>{p.name}</span>
+        <span>
+          <ShortName name={p.name} />
+        </span>
       </div>
       <div className="pdp">
         <div className="gallery">

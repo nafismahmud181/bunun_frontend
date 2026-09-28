@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api/client';
 import { fmt } from '@/lib/utils';
 import type { OrderStatus, TrackedOrder } from '@/lib/types';
+import ShortName from './ShortName';
 
 // Shown in this order; cancelled/returned/refunded appear only if they happened.
 const STEPS: OrderStatus[] = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
@@ -134,7 +135,7 @@ export default function TrackOrder() {
           {order.items.map((i) => (
             <div className="sum-line" key={i.sku}>
               <span>
-                {i.name} · {i.label} × {i.qty}
+                <ShortName name={i.name} /> · {i.label} × {i.qty}
               </span>
               <b>৳{fmt(i.lineTotal)}</b>
             </div>
