@@ -47,7 +47,7 @@ app/
   product/[slug]/page.tsx   Product page; old /product/r1 links redirect to the slug
   checkout/page.tsx         Loads the address list, renders CheckoutForm
   order-success/page.tsx    Confirmation with a link to track the order
-  track/page.tsx            Track an order by order number + phone (delivered orders link to the review page)
+  track/page.tsx            Track an order by order number + phone: courier and tracking link once booked; delivered orders link to the review page
   review/page.tsx           Review a delivered order: order number + phone, then stars, text and up to 3 photos
   wishlist/page.tsx         Products saved in this browser
   about, privacy, terms, refund-policy/   Store pages; the text is written in the admin (Content → Store pages)

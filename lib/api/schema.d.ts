@@ -1029,6 +1029,53 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/webhooks/pathao': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Pathao parcel status updates */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            event?: string;
+            consignment_id?: string;
+          } & {
+            [key: string]: unknown;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        202: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              received: boolean;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/admin/auth/login': {
     parameters: {
       query?: never;
@@ -2524,7 +2571,76 @@ export interface paths {
     };
     put?: never;
     post?: never;
-    delete?: never;
+    /** Delete a product no order includes (ordered products can only be archived) */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': null;
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
     options?: never;
     head?: never;
     /** Edit details, publish, unpublish or archive */
@@ -7351,6 +7467,488 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/courier': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Which courier is set up (sandbox or live) */
+    get: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['CourierInfo'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/orders/{orderNo}/parcel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** What a courier booking would send: weight, COD amount, address, contents */
+    get: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          orderNo: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ParcelDefaults'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/orders/{orderNo}/shipments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Book the order with the courier
+     * @description 422 COURIER_REJECTED when the courier refuses (details.fields per field); 502 COURIER_UNKNOWN when it gave no clear answer — the booking then waits until staff check the courier panel.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          orderNo: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description Parcel weight; defaults to the options’ shipping weights */
+            weightKg?: number;
+            /** @description Extra instruction for the rider */
+            note?: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminOrderDetail'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        422: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        502: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/orders/{orderNo}/shipments/{shipmentId}/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Ask the courier for the latest status now */
+    post: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          orderNo: string;
+          shipmentId: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminOrderDetail'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        502: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        503: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/orders/{orderNo}/shipments/{shipmentId}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Mark a booking as not live at the courier (it wasn't booked, or it was cancelled there) */
+    post: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          orderNo: string;
+          shipmentId: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['AdminOrderDetail'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -7586,6 +8184,13 @@ export interface components {
         status: components['schemas']['OrderStatusInput'];
         at: string;
       }[];
+      /** @description The parcel with the courier, once booked */
+      courier: {
+        name: string;
+        consignmentId: string;
+        status: string | null;
+        trackingUrl: string | null;
+      } | null;
     };
     CustomerRowInput: {
       id: number;
@@ -8088,6 +8693,27 @@ export interface components {
         [key: string]: number;
       };
     };
+    AdminShipmentInput: {
+      id: number;
+      courier: string;
+      /** @enum {string} */
+      state: 'booking' | 'active' | 'delivered' | 'returned' | 'cancelled';
+      consignmentId: string | null;
+      statusLabel: string | null;
+      deliveryFee: number | null;
+      codAmount: number;
+      weightKg: number;
+      note: string | null;
+      lastError: string | null;
+      trackingUrl: string | null;
+      checkedAt: string | null;
+      createdAt: string;
+      events: {
+        label: string;
+        source: string;
+        at: string;
+      }[];
+    };
     AdminOrderDetailInput: {
       orderNo: string;
       createdAt: string;
@@ -8109,6 +8735,13 @@ export interface components {
         returned: number;
         /** @description Total of delivered orders */
         spent: number;
+        /** @description This phone number's delivery record with the store */
+        risk: {
+          /** @enum {string} */
+          level: 'new' | 'good' | 'watch' | 'high';
+          /** @description Delivered ÷ (delivered + returned), % */
+          successRate: number | null;
+        };
       };
       address: {
         division: string;
@@ -8159,6 +8792,8 @@ export interface components {
         sentAt: string | null;
       }[];
       ip: string | null;
+      /** @description Courier bookings, newest first */
+      shipments: components['schemas']['AdminShipmentInput'][];
     };
     CartLineInput: {
       sku: string;
@@ -8271,6 +8906,22 @@ export interface components {
       id: number;
       /** @enum {string} */
       status: 'pending';
+    };
+    CourierInfoInput: {
+      /** @description False until the courier credentials are set on the server */
+      enabled: boolean;
+      name: string | null;
+      label: string | null;
+      /** @enum {string|null} */
+      mode: 'sandbox' | 'live' | null;
+    };
+    ParcelDefaultsInput: {
+      weightKg: number;
+      /** @description False when some options have no shipping weight (0.5 kg is assumed) */
+      weightKnown: boolean;
+      codAmount: number;
+      address: string;
+      description: string;
     };
     DeliveryZoneInput: {
       key: string;
@@ -8538,6 +9189,13 @@ export interface components {
         status: components['schemas']['OrderStatus'];
         at: string;
       }[];
+      /** @description The parcel with the courier, once booked */
+      courier: {
+        name: string;
+        consignmentId: string;
+        status: string | null;
+        trackingUrl: string | null;
+      } | null;
     };
     CustomerRow: {
       id: number;
@@ -9040,6 +9698,27 @@ export interface components {
         [key: string]: number;
       };
     };
+    AdminShipment: {
+      id: number;
+      courier: string;
+      /** @enum {string} */
+      state: 'booking' | 'active' | 'delivered' | 'returned' | 'cancelled';
+      consignmentId: string | null;
+      statusLabel: string | null;
+      deliveryFee: number | null;
+      codAmount: number;
+      weightKg: number;
+      note: string | null;
+      lastError: string | null;
+      trackingUrl: string | null;
+      checkedAt: string | null;
+      createdAt: string;
+      events: {
+        label: string;
+        source: string;
+        at: string;
+      }[];
+    };
     AdminOrderDetail: {
       orderNo: string;
       createdAt: string;
@@ -9061,6 +9740,13 @@ export interface components {
         returned: number;
         /** @description Total of delivered orders */
         spent: number;
+        /** @description This phone number's delivery record with the store */
+        risk: {
+          /** @enum {string} */
+          level: 'new' | 'good' | 'watch' | 'high';
+          /** @description Delivered ÷ (delivered + returned), % */
+          successRate: number | null;
+        };
       };
       address: {
         division: string;
@@ -9111,6 +9797,8 @@ export interface components {
         sentAt: string | null;
       }[];
       ip: string | null;
+      /** @description Courier bookings, newest first */
+      shipments: components['schemas']['AdminShipment'][];
     };
     CartLine: {
       sku: string;
@@ -9223,6 +9911,22 @@ export interface components {
       id: number;
       /** @enum {string} */
       status: 'pending';
+    };
+    CourierInfo: {
+      /** @description False until the courier credentials are set on the server */
+      enabled: boolean;
+      name: string | null;
+      label: string | null;
+      /** @enum {string|null} */
+      mode: 'sandbox' | 'live' | null;
+    };
+    ParcelDefaults: {
+      weightKg: number;
+      /** @description False when some options have no shipping weight (0.5 kg is assumed) */
+      weightKnown: boolean;
+      codAmount: number;
+      address: string;
+      description: string;
     };
     DeliveryZone: {
       key: string;

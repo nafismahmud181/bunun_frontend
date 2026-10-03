@@ -132,6 +132,20 @@ export default function TrackOrder() {
               </li>
             ))}
           </ol>
+          {order.courier && (
+            <p className="track-courier">
+              With <b>{order.courier.name}</b> · {order.courier.consignmentId}
+              {order.courier.status && <> · {order.courier.status}</>}
+              {order.courier.trackingUrl && (
+                <>
+                  {' '}
+                  <a href={order.courier.trackingUrl} target="_blank" rel="noreferrer">
+                    Track with {order.courier.name} ↗
+                  </a>
+                </>
+              )}
+            </p>
+          )}
           {order.items.map((i) => (
             <div className="sum-line" key={i.sku}>
               <span>

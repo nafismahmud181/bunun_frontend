@@ -2556,3 +2556,12 @@ textarea.input {
   white-space: nowrap;
   border: 0;
 }
+
+/* Courier line on the track page (Phase 6) */
+.track-courier {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14px;
+}
