@@ -16,6 +16,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The end-to-end tests build into their own folder (NEXT_DIST_DIR=.next-e2e) with the test API's
+  // address baked in, so they never overwrite a normal build.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   poweredByHeader: false,
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'images.pexels.com' }],

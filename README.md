@@ -27,8 +27,31 @@ Requires Node.js 20.9 or newer. `NEXT_PUBLIC_API_URL` is baked in at build time,
 | `typecheck`               | TypeScript, no output                                        |
 | `format` / `format:check` | Prettier (write / check only)                                |
 | `gen:api`                 | Regenerate `lib/api/schema.d.ts` from the backend's spec     |
+| `e2e`                     | End-to-end browser tests of the whole shop (below)           |
 
 CI runs `lint`, `format:check`, `typecheck` and `build` on every push and pull request.
+
+## End-to-end tests
+
+`npm run e2e` checks the whole shop the way people use it, before you push to production. It needs
+**Docker running** and the `backend` and `admin` repos next to this one. A full run takes about two minutes.
+
+It starts a throwaway copy of everything on this computer: a fresh database in Docker (port 54329),
+the API (4500), this storefront (3500) and the admin panel (3600), then removes it all. Your real
+database and your `npm run dev` servers are never touched.
+
+| Test file               | What it checks                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| `1-shopping.spec.ts`    | Home and shop pages, sizes and prices, the cart (also on a phone-sized screen)             |
+| `2-checkout.spec.ts`    | Cash on delivery to Dhanmondi: delivery fee, a wrong and a right coupon, totals, tracking  |
+| `3-admin.spec.ts`       | Staff sign in with 2FA, find that order and take it to delivered; stock and history follow |
+| `4-permissions.spec.ts` | Each staff role is kept out of pages it may not see; a wrong 2FA code doesn't sign in      |
+
+- `npm run e2e -- --skip-build` reuses the last test builds (when only the tests changed).
+- `npm run e2e -- --keep` leaves the test shop running afterwards so you can click around; Ctrl+C stops it.
+- `npm run e2e -- --headed` shows the browser while it works.
+- When something fails: `npx playwright show-report` opens a report with a screenshot and a step-by-step
+  trace of each failure. Server logs are in `e2e/.logs/`.
 
 ## How catalogue data flows
 

@@ -3,3 +3,9 @@ out
 node_modules
 package-lock.json
 next-env.d.ts
+
+# End-to-end test output
+.next-e2e
+playwright-report
+test-results
+e2e/.logs
