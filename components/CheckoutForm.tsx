@@ -51,8 +51,8 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
   );
 
   // Delivery fee, coupon discount and total always come from the server, for the chosen area,
-  // coupon and current cart. With a valid phone number the coupon's per-phone rules are checked too.
-  const phoneForQuote = isPhone(form.phone) ? normalisePhone(form.phone) : '';
+  // coupon and current cart. A coupon's per-phone and first-order rules are checked when the order
+  // is placed (the quote doesn't take a phone number, so it can't reveal who has ordered before).
   useEffect(() => {
     if (!token || (!form.areaId && !coupon)) return;
     let stale = false;
@@ -62,7 +62,6 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
           query: {
             ...(form.areaId && { areaId: Number(form.areaId) }),
             ...(coupon && { coupon }),
-            ...(coupon && phoneForQuote && { phone: phoneForQuote }),
           },
         },
         headers: { 'x-cart-token': token },
@@ -72,7 +71,7 @@ export default function CheckoutForm({ locations }: { locations: LocationTree })
     return () => {
       stale = true;
     };
-  }, [form.areaId, token, subtotal, coupon, phoneForQuote, quoteVersion]);
+  }, [form.areaId, token, subtotal, coupon, quoteVersion]);
 
   const applyCoupon = () => {
     const code = couponInput.trim().toUpperCase();

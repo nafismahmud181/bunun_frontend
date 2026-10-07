@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
 
@@ -5,7 +6,7 @@ import type { NextRequest } from 'next/server';
 // change straight away instead of within 60 seconds. Needs the shared REVALIDATE_SECRET.
 export async function POST(request: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
-  if (!secret || request.headers.get('x-revalidate-secret') !== secret) {
+  if (!secret || !sameSecret(request.headers.get('x-revalidate-secret') ?? '', secret)) {
     return Response.json({ revalidated: false }, { status: 401 });
   }
   // expire: 0 drops the cached data outright. With stale-while-revalidate ('max'), a product
@@ -13,4 +14,10 @@ export async function POST(request: NextRequest) {
   // treats as a failed refresh, so it kept serving the old page.
   revalidateTag('catalogue', { expire: 0 });
   return Response.json({ revalidated: true });
+}
+
+/** Compares hashes in constant time, so response timing reveals nothing about the secret. */
+function sameSecret(given: string, secret: string) {
+  const digest = (s: string) => createHash('sha256').update(s).digest();
+  return timingSafeEqual(digest(given), digest(secret));
 }

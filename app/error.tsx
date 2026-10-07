@@ -1,9 +1,14 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 // Shown when a page can't load, e.g. the catalogue API is unreachable.
-export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <section className="done">
       <h1>Something went wrong</h1>

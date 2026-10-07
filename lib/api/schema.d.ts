@@ -539,8 +539,6 @@ export interface paths {
           /** @description Without it, the quote has no delivery fee yet */
           areaId?: number;
           coupon?: string;
-          /** @description With a coupon: also checks its per-phone and first-order rules */
-          phone?: string;
         };
         header?: {
           'x-cart-token'?: string;
@@ -5639,6 +5637,430 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Sales by day, product, category and channel; payments; courier performance */
+    get: {
+      parameters: {
+        query?: {
+          /** @description First day (Bangladesh time); default 29 days before `to` */
+          from?: string;
+          /** @description Last day, included; default today */
+          to?: string;
+        };
+        header?: {
+          authorization?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['SalesReport'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/profit-plan': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Profit planner inputs, the typical defaults and the last 90 days of real figures */
+    get: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProfitPlanReply'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    /** Save the profit planner inputs */
+    put: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['ProfitPlanInput'];
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProfitPlanReply'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/product-costs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Products with each size’s price and cost */
+    get: {
+      parameters: {
+        query?: {
+          q?: string;
+          /** @description Just this product */
+          productId?: number;
+          /** @description Only products with a size whose cost is not entered */
+          missing?: 'true' | 'false';
+          page?: number;
+          limit?: number;
+        };
+        header?: {
+          authorization?: string;
+        };
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['ProductCostList'];
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/product-costs/{variantId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Save what one unit of a product size costs (no lines clears it) */
+    put: {
+      parameters: {
+        query?: never;
+        header?: {
+          authorization?: string;
+        };
+        path: {
+          variantId: number;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['VariantCostBodyInput'];
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              cost: components['schemas']['VariantCost'] | null;
+            };
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+        /** @description Default Response */
+        409: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Error'];
+          };
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/admin/audit': {
     parameters: {
       query?: never;
@@ -8344,6 +8766,242 @@ export interface components {
         name: string;
       }[];
     };
+    SalesReportInput: {
+      range: {
+        from: string;
+        to: string;
+        days: number;
+        /** @enum {string} */
+        bucket: 'day' | 'month';
+      };
+      /** @description The same number of days just before */
+      previous: {
+        from: string;
+        to: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      };
+      summary: {
+        /** @description Orders placed, without cancelled, returned and refunded ones */
+        orders: number;
+        /** @description Their totals (items − discounts + delivery) */
+        revenue: number;
+        /** @description Whole taka */
+        averageOrder: number;
+        itemsSold: number;
+        /** @description Whole taka */
+        discounts: number;
+        /** @description Delivery charged to customers */
+        deliveryFees: number;
+        allOrders: number;
+        cancelled: number;
+        returned: number;
+        delivered: number;
+        /** @description Returned ÷ (delivered + returned), % */
+        returnRate: number | null;
+        customers: number;
+        /** @description First order ever in this range */
+        newCustomers: number;
+        /** @description % against the previous period; null when it had none */
+        revenueChange: number | null;
+        ordersChange: number | null;
+      };
+      /** @description Per day, or per month for ranges over 92 days */
+      series: {
+        day: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      products: {
+        productId: number | null;
+        name: string;
+        qty: number;
+        /** @description Item sales */
+        revenue: number;
+      }[];
+      categories: {
+        name: string;
+        orders: number;
+        qty: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      sources: {
+        source: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      statuses: {
+        status: string;
+        orders: number;
+        /** @description Whole taka */
+        total: number;
+      }[];
+      payments: {
+        methods: {
+          method: string;
+          orders: number;
+          /** @description Whole taka */
+          amount: number;
+          /** @description Whole taka */
+          paid: number;
+        }[];
+        cod: {
+          collected: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+          withCourier: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+          notShipped: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+        };
+      };
+      coupons: {
+        code: string;
+        uses: number;
+        /** @description Whole taka */
+        saved: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      couriers: {
+        courier: string;
+        booked: number;
+        inTransit: number;
+        delivered: number;
+        returned: number;
+        cancelled: number;
+        successRate: number | null;
+        /** @description Delivery fees charged by the courier */
+        fees: number;
+        /** @description Whole taka */
+        codBooked: number;
+        /** @description Booking to delivery */
+        averageDays: number | null;
+      }[];
+    };
+    ProfitPlanInput: {
+      /** @description One-time costs before the first sale */
+      startup: {
+        label: string;
+        /** @description Whole or fractional taka */
+        amount: number;
+        /** @default  */
+        note: string;
+      }[];
+      /** @description Fixed costs paid every month */
+      monthly: {
+        label: string;
+        /** @description Whole or fractional taka */
+        amount: number;
+        /** @default  */
+        note: string;
+      }[];
+      perOrder: {
+        /** @description Items in an order after discounts, without delivery */
+        averageItemValue: number;
+        /** @description Percent, e.g. 60 for 60% */
+        insideDhakaShare: number;
+        /** @description Delivery charged to the customer inside Dhaka */
+        chargeInside: number;
+        chargeOutside: number;
+        /** @description Orders that pay no delivery */
+        freeDeliveryShare: number;
+        /** @description What the courier charges you inside Dhaka */
+        courierFeeInside: number;
+        courierFeeOutside: number;
+        /** @description Courier COD charge on cash collected */
+        codChargePct: number;
+        packaging: number;
+        smsPerOrder: number;
+        smsPrice: number;
+        /** @description Parcels refused or returned */
+        returnRate: number;
+        /** @description Return charge as a share of the delivery fee */
+        returnChargePct: number;
+        /** @description Online-payment fee; 0 while cash on delivery only */
+        paymentFeePct: number;
+      };
+      /** @description Three product-margin scenarios: (price − cost) ÷ price */
+      margins: number[];
+      /** @description Planned orders, months 1–12 */
+      orders: number[];
+    };
+    StoreActualsInput: {
+      from: string;
+      to: string;
+      days: number;
+      /** @description Orders placed, without cancelled, returned and refunded ones */
+      orders: number;
+      ordersPerMonth: number | null;
+      averageItemValue: number | null;
+      insideDhakaShare: number | null;
+      freeDeliveryShare: number | null;
+      /** @description Returned ÷ (delivered + returned), %; null with nothing finished yet */
+      returnRate: number | null;
+      /** @description Delivery fee of the inside-Dhaka zone */
+      chargeInside: number | null;
+      /** @description Delivery fee of the outside-Dhaka zone */
+      chargeOutside: number | null;
+      /** @description Average live courier fee on parcels inside Dhaka */
+      courierFeeInside: number | null;
+      courierFeeOutside: number | null;
+    };
+    ProfitPlanReplyInput: {
+      plan: components['schemas']['ProfitPlanInput'];
+      defaults: components['schemas']['ProfitPlanInput'];
+      /** @description False until someone saves; `plan` is then the defaults */
+      saved: boolean;
+      updatedAt: string | null;
+      actuals: components['schemas']['StoreActualsInput'];
+    };
+    VariantCostBodyInput: {
+      /** @description Empty clears the cost */
+      lines: {
+        label: string;
+        amount: number;
+      }[];
+    };
+    VariantCostInput: {
+      lines: {
+        label: string;
+        amount: number;
+      }[];
+      unitCost: number;
+      updatedAt: string;
+    };
+    CostedVariantInput: {
+      id: number;
+      label: string;
+      sku: string;
+      price: number;
+      cost: components['schemas']['VariantCostInput'] | null;
+    };
+    CostedProductInput: {
+      id: number;
+      name: string;
+      image: string | null;
+      category: string;
+      status: string;
+      variants: components['schemas']['CostedVariantInput'][];
+    };
+    ProductCostListInput: {
+      items: components['schemas']['CostedProductInput'][];
+      total: number;
+      page: number;
+      limit: number;
+    };
     ImageInput: {
       url: string;
       alt: string | null;
@@ -9348,6 +10006,242 @@ export interface components {
         id: number;
         name: string;
       }[];
+    };
+    SalesReport: {
+      range: {
+        from: string;
+        to: string;
+        days: number;
+        /** @enum {string} */
+        bucket: 'day' | 'month';
+      };
+      /** @description The same number of days just before */
+      previous: {
+        from: string;
+        to: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      };
+      summary: {
+        /** @description Orders placed, without cancelled, returned and refunded ones */
+        orders: number;
+        /** @description Their totals (items − discounts + delivery) */
+        revenue: number;
+        /** @description Whole taka */
+        averageOrder: number;
+        itemsSold: number;
+        /** @description Whole taka */
+        discounts: number;
+        /** @description Delivery charged to customers */
+        deliveryFees: number;
+        allOrders: number;
+        cancelled: number;
+        returned: number;
+        delivered: number;
+        /** @description Returned ÷ (delivered + returned), % */
+        returnRate: number | null;
+        customers: number;
+        /** @description First order ever in this range */
+        newCustomers: number;
+        /** @description % against the previous period; null when it had none */
+        revenueChange: number | null;
+        ordersChange: number | null;
+      };
+      /** @description Per day, or per month for ranges over 92 days */
+      series: {
+        day: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      products: {
+        productId: number | null;
+        name: string;
+        qty: number;
+        /** @description Item sales */
+        revenue: number;
+      }[];
+      categories: {
+        name: string;
+        orders: number;
+        qty: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      sources: {
+        source: string;
+        orders: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      statuses: {
+        status: string;
+        orders: number;
+        /** @description Whole taka */
+        total: number;
+      }[];
+      payments: {
+        methods: {
+          method: string;
+          orders: number;
+          /** @description Whole taka */
+          amount: number;
+          /** @description Whole taka */
+          paid: number;
+        }[];
+        cod: {
+          collected: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+          withCourier: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+          notShipped: {
+            orders: number;
+            /** @description Whole taka */
+            amount: number;
+          };
+        };
+      };
+      coupons: {
+        code: string;
+        uses: number;
+        /** @description Whole taka */
+        saved: number;
+        /** @description Whole taka */
+        revenue: number;
+      }[];
+      couriers: {
+        courier: string;
+        booked: number;
+        inTransit: number;
+        delivered: number;
+        returned: number;
+        cancelled: number;
+        successRate: number | null;
+        /** @description Delivery fees charged by the courier */
+        fees: number;
+        /** @description Whole taka */
+        codBooked: number;
+        /** @description Booking to delivery */
+        averageDays: number | null;
+      }[];
+    };
+    ProfitPlan: {
+      /** @description One-time costs before the first sale */
+      startup: {
+        label: string;
+        /** @description Whole or fractional taka */
+        amount: number;
+        /** @default  */
+        note: string;
+      }[];
+      /** @description Fixed costs paid every month */
+      monthly: {
+        label: string;
+        /** @description Whole or fractional taka */
+        amount: number;
+        /** @default  */
+        note: string;
+      }[];
+      perOrder: {
+        /** @description Items in an order after discounts, without delivery */
+        averageItemValue: number;
+        /** @description Percent, e.g. 60 for 60% */
+        insideDhakaShare: number;
+        /** @description Delivery charged to the customer inside Dhaka */
+        chargeInside: number;
+        chargeOutside: number;
+        /** @description Orders that pay no delivery */
+        freeDeliveryShare: number;
+        /** @description What the courier charges you inside Dhaka */
+        courierFeeInside: number;
+        courierFeeOutside: number;
+        /** @description Courier COD charge on cash collected */
+        codChargePct: number;
+        packaging: number;
+        smsPerOrder: number;
+        smsPrice: number;
+        /** @description Parcels refused or returned */
+        returnRate: number;
+        /** @description Return charge as a share of the delivery fee */
+        returnChargePct: number;
+        /** @description Online-payment fee; 0 while cash on delivery only */
+        paymentFeePct: number;
+      };
+      /** @description Three product-margin scenarios: (price − cost) ÷ price */
+      margins: number[];
+      /** @description Planned orders, months 1–12 */
+      orders: number[];
+    };
+    StoreActuals: {
+      from: string;
+      to: string;
+      days: number;
+      /** @description Orders placed, without cancelled, returned and refunded ones */
+      orders: number;
+      ordersPerMonth: number | null;
+      averageItemValue: number | null;
+      insideDhakaShare: number | null;
+      freeDeliveryShare: number | null;
+      /** @description Returned ÷ (delivered + returned), %; null with nothing finished yet */
+      returnRate: number | null;
+      /** @description Delivery fee of the inside-Dhaka zone */
+      chargeInside: number | null;
+      /** @description Delivery fee of the outside-Dhaka zone */
+      chargeOutside: number | null;
+      /** @description Average live courier fee on parcels inside Dhaka */
+      courierFeeInside: number | null;
+      courierFeeOutside: number | null;
+    };
+    ProfitPlanReply: {
+      plan: components['schemas']['ProfitPlan'];
+      defaults: components['schemas']['ProfitPlan'];
+      /** @description False until someone saves; `plan` is then the defaults */
+      saved: boolean;
+      updatedAt: string | null;
+      actuals: components['schemas']['StoreActuals'];
+    };
+    VariantCostBody: {
+      /** @description Empty clears the cost */
+      lines: {
+        label: string;
+        amount: number;
+      }[];
+    };
+    VariantCost: {
+      lines: {
+        label: string;
+        amount: number;
+      }[];
+      unitCost: number;
+      updatedAt: string;
+    };
+    CostedVariant: {
+      id: number;
+      label: string;
+      sku: string;
+      price: number;
+      cost: components['schemas']['VariantCost'] | null;
+    };
+    CostedProduct: {
+      id: number;
+      name: string;
+      image: string | null;
+      category: string;
+      status: string;
+      variants: components['schemas']['CostedVariant'][];
+    };
+    ProductCostList: {
+      items: components['schemas']['CostedProduct'][];
+      total: number;
+      page: number;
+      limit: number;
     };
     Image: {
       url: string;
