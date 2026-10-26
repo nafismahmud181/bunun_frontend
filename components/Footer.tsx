@@ -7,9 +7,9 @@ export default function Footer({ categories }: { categories: Category[] }) {
     <footer className="site-footer">
       <div className="container footer-cols">
         <div>
-          <div className="footer-brand">Bunon</div>
+          <div className="footer-brand">BGD Mart</div>
           <span>House 12, Road 5, Dhanmondi, Dhaka 1205</span>
-          <span>support@bunon.com.bd</span>
+          <span>support@bgdmart.com</span>
           <span>09612-345678 (10am–8pm)</span>
         </div>
         <div>
@@ -37,7 +37,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
         </div>
       </div>
       <div className="container footer-bottom">
-        <span>© 2026 Bunon. All rights reserved.</span>
+        <span>© 2026 BGD Mart. All rights reserved.</span>
         <span className="footer-legal">
           <Link href="/about">About</Link>
           <Link href="/privacy">Privacy Policy</Link>

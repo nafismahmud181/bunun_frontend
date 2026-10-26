@@ -5,7 +5,7 @@ import { state, taka } from '../helpers';
 
 test('the home page shows products and the shop lists them', async ({ page }) => {
   await page.goto('/');
-  await expect(page).toHaveTitle(/Bunon/);
+  await expect(page).toHaveTitle(/BGD Mart/);
   await expect(page.locator('a[href^="/product/"]').first()).toBeVisible();
 
   await page.goto('/shop');

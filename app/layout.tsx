@@ -13,11 +13,11 @@ const FALLBACK_SETTINGS: StoreSettings = {
   freeDeliveryThreshold: 3000,
   hotline: '09612-345678',
   zones: [],
-  store: { name: 'Bunon', address: '', email: '', tradeLicence: '' },
+  store: { name: 'BGD Mart', address: '', email: '', tradeLicence: '' },
 };
 
 export const metadata: Metadata = {
-  title: { default: 'Bunon — Handcrafted Home Décor in Bangladesh', template: '%s | Bunon' },
+  title: { default: 'BGD Mart — Handcrafted Home Décor in Bangladesh', template: '%s | BGD Mart' },
   description:
     'Nakshi kantha table runners, cushion covers, jute décor and home textiles. Cash on Delivery across Bangladesh.',
 };

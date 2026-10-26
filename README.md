@@ -1,4 +1,4 @@
-# Bunon: Next.js Store (Theme 2 "Nakshi")
+# BGD Mart: Next.js Store (Theme 2 "Nakshi")
 
 This is a home décor e-commerce storefront for the Bangladesh market, built with Next.js 16 (App Router), React 19 and TypeScript. Products and categories come from the `bunun_backend` API.
 

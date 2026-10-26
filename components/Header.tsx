@@ -131,7 +131,7 @@ export default function Header({ categories }: { categories: Category[] }) {
             <Link className="logo" href="/">
               <span className="logo-mark">B</span>
               <span className="logo-text">
-                <span className="logo-name">Bunon</span>
+                <span className="logo-name">BGD Mart</span>
                 <span className="logo-sub">Handcrafted Home Décor</span>
               </span>
             </Link>
