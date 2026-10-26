@@ -5,7 +5,8 @@ import './globals.css';
 import CartProvider from '@/components/CartProvider';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getCategories, getStoreSettings } from '@/lib/catalogue';
+import { getCategories, getContent, getStoreSettings } from '@/lib/catalogue';
+import { themeCss } from '@/lib/theme';
 import type { Category, StoreSettings } from '@/lib/types';
 
 // Used only if the API can't be reached, so the header and cart still render.
@@ -27,12 +28,17 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   await connection();
   // If the API is down, the header and footer still render without category links;
   // the page itself shows app/error.tsx.
-  const [categories, settings] = await Promise.all([
+  const [categories, settings, theme] = await Promise.all([
     getCategories().catch((): Category[] => []),
     getStoreSettings().catch(() => FALLBACK_SETTINGS),
+    // The palette saved in the admin; null (or the API down) keeps the colours in globals.css.
+    getContent()
+      .then((c) => c.theme)
+      .catch(() => null),
   ]);
   return (
     <html lang="en">
+      <head>{theme && <style>{themeCss(theme)}</style>}</head>
       {/* Browser extensions (e.g. ColorZilla) add attributes to <body> before React loads. */}
       <body suppressHydrationWarning>
         <CartProvider settings={settings}>

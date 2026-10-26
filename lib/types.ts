@@ -21,6 +21,7 @@ export type ProductReviews = Schemas['ProductReviews'];
 export type FeaturedReviews = Schemas['FeaturedReviews'];
 export type ReviewableOrder = Schemas['ReviewableOrder'];
 export type StoreContent = Schemas['StoreContent'];
+export type ThemeColors = Schemas['ThemeColors'];
 export type StorePage = Schemas['StorePage'];
 
 /** The order just placed, kept for the confirmation page. */
