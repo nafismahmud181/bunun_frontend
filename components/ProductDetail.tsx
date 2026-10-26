@@ -7,6 +7,7 @@ import { bg, catHref, fmt, imgSrc } from '@/lib/utils';
 import type { ProductDetail as Product, ProductReviews, ProductSummary, Variant } from '@/lib/types';
 import { useCart } from './CartProvider';
 import Accordion from './Accordion';
+import ItemDetails from './ItemDetails';
 import ProductCard from './ProductCard';
 import ProductReviewsSection from './ProductReviewsSection';
 import Stars from './Stars';
@@ -48,8 +49,8 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
   const addToCart = async () => !!variant && (await add(variant.sku, qty));
   const details: [string, string][] = [
     [
-      'Product Details',
-      `${p.description ? p.description + ' ' : ''}Colour may vary slightly due to the handmade nature of the product.`,
+      'Materials & Handmade Note',
+      'Each piece is made by hand, so colour and stitching may vary slightly from the photos.',
     ],
     [
       'Care Instructions',
@@ -117,7 +118,7 @@ export default function ProductDetail({ p, others, categoryImage, reviews }: Pro
               {variant?.compareAtPrice && <span className="pdp-was">৳{fmt(variant.compareAtPrice)}</span>}
             </div>
           </div>
-          <p className="pdp-desc">{p.description}</p>
+          {p.description && <ItemDetails text={p.description} />}
           <div>
             <div className="opt-label">
               {p.optionLabel}: <span>{variant?.label}</span>
